@@ -176,4 +176,4 @@ Currently seeking **remote junior to mid-level full-stack or AI engineering role
 
 ---
 
-*Built with ❤️ and powered by science.* 
+*Built with ❤️ and powered by science.*  
