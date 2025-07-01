@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BodyMind_AI - Personal Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      .gradient-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .progress-ring {
+        transition: stroke-dashoffset 0.5s ease-in-out;
+      }
+      .nutrition-bar {
+        transition: width 0.5s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 h-screen overflow-hidden flex flex-col">
+    <!-- iOS Status Bar -->
+    <div
+      class="bg-white h-11 flex items-center justify-between px-6 text-gray-900 text-sm font-medium border-b border-gray-100"
+    >
+      <span>9:41</span>
+      <div class="flex items-center space-x-1">
+        <i class="fas fa-signal text-xs"></i>
+        <i class="fas fa-wifi text-xs"></i>
+        <i class="fas fa-battery-three-quarters text-xs"></i>
+      </div>
+    </div>
+
+    <!-- Header with Progress -->
+    <div class="gradient-card px-6 py-6 text-white">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-2xl font-bold">Your Personal Plan</h1>
+          <p class="text-white/80 text-sm">Science-backed strategy</p>
+        </div>
+        <div
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center"
+        >
+          <span class="text-lg font-bold">Q</span>
+        </div>
+      </div>
+
+      <!-- Goal Progress -->
+      <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white/90 text-sm">Goal Progress</span>
+          <span class="text-white font-semibold">Week 2 of 12</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="flex-1">
+            <div class="flex justify-between text-sm mb-2">
+              <span class="text-white/80">Current: 68.5kg</span>
+              <span class="text-white/80">Target: 65kg</span>
+            </div>
+            <div class="w-full bg-white/20 rounded-full h-2">
+              <div
+                class="bg-green-400 h-2 rounded-full"
+                style="width: 43%"
+              ></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-xl font-bold text-white">-1.5</div>
+            <div class="text-xs text-white/80">kg lost</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+      <!-- AI Smart Logging -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">AI Smart Logging</h2>
+          <div
+            class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium"
+          >
+            <i class="fas fa-brain mr-1"></i>AI Powered
+          </div>
+        </div>
+
+        <!-- AI Input Area -->
+        <div class="mb-6">
+          <div class="bg-gray-50 rounded-xl p-4 mb-3">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-white text-sm font-medium">Q</span>
+              </div>
+              <div
+                class="flex-1 bg-white rounded-2xl px-4 py-3 border border-gray-200"
+              >
+                <p class="text-gray-800 text-sm">
+                  "Had scrambled eggs, toast and milk for breakfast. Did a
+                  30-minute run in the afternoon, really sweaty!"
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Processing -->
+          <div class="flex items-center space-x-3 mb-3">
+            <div
+              class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <span class="text-white text-sm">🦾</span>
+            </div>
+            <div
+              class="flex-1 bg-blue-50 rounded-2xl px-4 py-3 border border-blue-200"
+            >
+              <p class="text-blue-800 text-sm">
+                <i class="fas fa-magic mr-2"></i
+                ><strong>AI automatically parsed and logged:</strong>
+              </p>
+              <div class="mt-2 text-sm text-blue-700">
+                <p>
+                  • Breakfast: Scrambled eggs (1, ~78kcal), Toast (1 slice,
+                  ~80kcal), Milk (250ml, ~150kcal)
+                </p>
+                <p>• Exercise: 30-min run (~240kcal burned)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Input -->
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex-1 bg-gray-100 rounded-3xl px-4 py-3 flex items-center"
+            >
+              <input
+                type="text"
+                placeholder="Tell AI what you ate and exercised today..."
+                class="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 text-sm"
+              />
+              <button class="text-gray-500 ml-2">
+                <i class="fas fa-microphone text-lg"></i>
+              </button>
+            </div>
+            <button
+              class="bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center"
+            >
+              <i class="fas fa-paper-plane text-sm"></i>
+            </button>
+          </div>
+
+          <!-- AI Usage Tips -->
+          <div
+            class="mt-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200"
+          >
+            <div class="flex items-center mb-2">
+              <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+              <span class="text-sm font-medium text-yellow-800"
+                >💡 AI Logging Tips</span
+              >
+            </div>
+            <div class="text-xs text-yellow-700 space-y-1">
+              <p>
+                • Natural speech:
+                <span class="font-medium text-yellow-800"
+                  >"Had oatmeal for breakfast, salad for lunch"</span
+                >
+              </p>
+              <p>
+                • Exercise logging:
+                <span class="font-medium text-yellow-800"
+                  >"Ran for 30 minutes, felt tired but great"</span
+                >
+              </p>
+              <p>
+                • Mixed logging:
+                <span class="font-medium text-yellow-800"
+                  >"Had steak today, went to gym for 1 hour"</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Nutrition Summary -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Today's Nutrition</h2>
+          <button class="text-indigo-600 text-sm font-medium">
+            <i class="fas fa-comments mr-1"></i>Chat to Update
+          </button>
+        </div>
+
+        <!-- Calorie Progress -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-gray-600">Calories</span>
+            <span class="text-gray-900 font-medium">1,240 / 1,650 kcal</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-3">
+            <div
+              class="nutrition-bar bg-blue-500 h-3 rounded-full"
+              style="width: 75%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Macronutrients -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="relative w-16 h-16 mx-auto mb-2">
+              <svg class="w-16 h-16 transform -rotate-90">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#f3f4f6"
+                  stroke-width="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#10b981"
+                  stroke-width="8"
+                  fill="transparent"
+                  stroke-dasharray="175.9"
+                  stroke-dashoffset="52.8"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-sm font-bold text-gray-900">70%</span>
+              </div>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-900">Protein</div>
+              <div class="text-gray-600">84/120g</div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <div class="relative w-16 h-16 mx-auto mb-2">
+              <svg class="w-16 h-16 transform -rotate-90">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#f3f4f6"
+                  stroke-width="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#f59e0b"
+                  stroke-width="8"
+                  fill="transparent"
+                  stroke-dasharray="175.9"
+                  stroke-dashoffset="70.4"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-sm font-bold text-gray-900">60%</span>
+              </div>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-900">Carbs</div>
+              <div class="text-gray-600">84/140g</div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <div class="relative w-16 h-16 mx-auto mb-2">
+              <svg class="w-16 h-16 transform -rotate-90">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#f3f4f6"
+                  stroke-width="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="#ef4444"
+                  stroke-width="8"
+                  fill="transparent"
+                  stroke-dasharray="175.9"
+                  stroke-dashoffset="87.9"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-sm font-bold text-gray-900">50%</span>
+              </div>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-900">Fats</div>
+              <div class="text-gray-600">34/68g</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Workout Summary -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Today's Workout</h2>
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium"
+            >
+              <i class="fas fa-brain mr-1"></i>AI Generated
+            </div>
+            <div
+              class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium"
+            >
+              Strength Day
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Completed Workout -->
+        <div class="mb-4 p-3 bg-green-50 rounded-xl border border-green-200">
+          <div class="flex items-center mb-2">
+            <i class="fas fa-robot text-green-600 mr-2"></i>
+            <span class="text-sm font-medium text-green-800"
+              >AI detected completed exercise:</span
+            >
+          </div>
+          <p class="text-sm text-green-700">
+            "30-min run" → Automatically logged as cardio, ~240kcal burned
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <div
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-dumbbell text-blue-600 text-sm"></i>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">Push-ups</div>
+                <div class="text-sm text-gray-600">3 sets × 15 reps</div>
+              </div>
+            </div>
+            <button class="text-green-600">
+              <i class="fas fa-check-circle text-lg"></i>
+            </button>
+          </div>
+
+          <div
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-running text-purple-600 text-sm"></i>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">Running</div>
+                <div class="text-sm text-gray-600">30 min (AI auto-logged)</div>
+              </div>
+            </div>
+            <button class="text-green-600">
+              <i class="fas fa-check-circle text-lg"></i>
+            </button>
+          </div>
+
+          <div
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-heartbeat text-red-600 text-sm"></i>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">Plank</div>
+                <div class="text-sm text-gray-600">3 sets × 45 sec</div>
+              </div>
+            </div>
+            <button class="text-gray-300">
+              <i class="far fa-circle text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Suggestion -->
+        <div class="mt-4 p-3 bg-purple-50 rounded-xl border border-purple-200">
+          <div class="flex items-center">
+            <i class="fas fa-magic text-purple-600 mr-2"></i>
+            <div class="text-sm text-purple-800">
+              <strong>AI Suggestion:</strong> Complete the Plank exercise for a
+              more balanced workout today!
+            </div>
+          </div>
+        </div>
+
+        <!-- Science Tip -->
+        <div class="mt-4 p-3 bg-blue-50 rounded-xl">
+          <div class="flex items-center">
+            <i class="fas fa-lightbulb text-blue-600 mr-2"></i>
+            <div class="text-sm text-blue-800">
+              <strong>Science Tip:</strong> Strength training boosts metabolism
+              for up to 24 hours post-workout
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Evidence -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          Latest Research
+        </h2>
+        <div
+          class="p-4 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl border border-purple-200"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="fas fa-microscope text-purple-600 mr-3"></i>
+              <div>
+                <div class="font-medium text-purple-900">
+                  Combined Training Benefits
+                </div>
+                <div class="text-sm text-purple-700">
+                  Strength + cardio increases fat loss by 28%
+                </div>
+              </div>
+            </div>
+            <button class="text-purple-600">
+              <i class="fas fa-external-link-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="bg-white px-6 py-2 border-t border-gray-100">
+      <div class="flex justify-around">
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-comments text-lg mb-1"></i>
+          <span class="text-xs">Chat</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-indigo-600">
+          <i class="fas fa-clipboard-list text-lg mb-1"></i>
+          <span class="text-xs font-medium">Plan</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-chart-line text-lg mb-1"></i>
+          <span class="text-xs">Progress</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-user text-lg mb-1"></i>
+          <span class="text-xs">Profile</span>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

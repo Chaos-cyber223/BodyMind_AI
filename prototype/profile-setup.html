@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BodyMind_AI - Profile Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      .ios-input {
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+      }
+      .ios-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+      .progress-bar {
+        transition: width 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 h-screen overflow-hidden">
+    <!-- iOS Status Bar -->
+    <div
+      class="bg-white h-11 flex items-center justify-between px-6 text-gray-900 text-sm font-medium border-b border-gray-100"
+    >
+      <span>9:41</span>
+      <div class="flex items-center space-x-1">
+        <i class="fas fa-signal text-xs"></i>
+        <i class="fas fa-wifi text-xs"></i>
+        <i class="fas fa-battery-three-quarters text-xs"></i>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div
+      class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-100"
+    >
+      <button class="text-indigo-600 text-base font-medium">
+        <i class="fas fa-chevron-left mr-2"></i>Back
+      </button>
+      <h1 class="text-lg font-semibold text-gray-900">Profile Setup</h1>
+      <button class="text-indigo-600 text-base font-medium">Skip</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="bg-white px-6 py-4 border-b border-gray-100">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm text-gray-600">Step 1 of 3</span>
+        <span class="text-sm text-gray-600">33%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div
+          class="progress-bar bg-indigo-600 h-2 rounded-full"
+          style="width: 33%"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-6">
+      <div class="space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+          <h2 class="text-2xl font-bold text-gray-900 mb-3">
+            Tell us about yourself
+          </h2>
+          <p class="text-gray-600 text-base">
+            This helps us create your personalized plan
+          </p>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="space-y-4">
+          <!-- Gender Selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3"
+              >Gender</label
+            >
+            <div class="flex space-x-3">
+              <button
+                class="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-xl font-medium"
+              >
+                <i class="fas fa-mars mr-2"></i>Male
+              </button>
+              <button
+                class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-medium"
+              >
+                <i class="fas fa-venus mr-2"></i>Female
+              </button>
+            </div>
+          </div>
+
+          <!-- Age -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Age</label
+            >
+            <input
+              type="number"
+              placeholder="Enter your age"
+              class="ios-input w-full px-4 py-3 rounded-xl bg-white outline-none"
+              value="28"
+            />
+          </div>
+
+          <!-- Height -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Height</label
+            >
+            <div class="flex space-x-3">
+              <input
+                type="number"
+                placeholder="175"
+                class="ios-input flex-1 px-4 py-3 rounded-xl bg-white outline-none"
+                value="175"
+              />
+              <select
+                class="ios-input px-4 py-3 rounded-xl bg-white outline-none"
+              >
+                <option>cm</option>
+                <option>ft</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Weight -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Current Weight</label
+            >
+            <div class="flex space-x-3">
+              <input
+                type="number"
+                placeholder="70"
+                class="ios-input flex-1 px-4 py-3 rounded-xl bg-white outline-none"
+                value="70"
+              />
+              <select
+                class="ios-input px-4 py-3 rounded-xl bg-white outline-none"
+              >
+                <option>kg</option>
+                <option>lbs</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Goal Weight -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Goal Weight</label
+            >
+            <div class="flex space-x-3">
+              <input
+                type="number"
+                placeholder="65"
+                class="ios-input flex-1 px-4 py-3 rounded-xl bg-white outline-none"
+                value="65"
+              />
+              <select
+                class="ios-input px-4 py-3 rounded-xl bg-white outline-none"
+              >
+                <option>kg</option>
+                <option>lbs</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Activity Level -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3"
+              >Activity Level</label
+            >
+            <div class="space-y-3">
+              <div class="bg-white p-4 rounded-xl border border-gray-200">
+                <div class="flex items-center">
+                  <input type="radio" name="activity" class="mr-3" checked />
+                  <div>
+                    <div class="font-medium text-gray-900">Sedentary</div>
+                    <div class="text-sm text-gray-600">
+                      Little to no exercise
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-gray-200">
+                <div class="flex items-center">
+                  <input type="radio" name="activity" class="mr-3" />
+                  <div>
+                    <div class="font-medium text-gray-900">Moderate</div>
+                    <div class="text-sm text-gray-600">
+                      Exercise 3-4 times per week
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-gray-200">
+                <div class="flex items-center">
+                  <input type="radio" name="activity" class="mr-3" />
+                  <div>
+                    <div class="font-medium text-gray-900">Active</div>
+                    <div class="text-sm text-gray-600">
+                      Exercise 5+ times per week
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Button -->
+    <div class="bg-white px-6 py-4 border-t border-gray-100">
+      <button
+        class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl text-lg"
+      >
+        Continue
+      </button>
+    </div>
+  </body>
+</html>

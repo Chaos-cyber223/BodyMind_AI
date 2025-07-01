@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BodyMind_AI - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      .toggle-switch {
+        transition: all 0.3s ease;
+      }
+      .toggle-switch:checked {
+        background-color: #6366f1;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 h-screen overflow-hidden flex flex-col">
+    <!-- iOS Status Bar -->
+    <div
+      class="bg-white h-11 flex items-center justify-between px-6 text-gray-900 text-sm font-medium border-b border-gray-100"
+    >
+      <span>9:41</span>
+      <div class="flex items-center space-x-1">
+        <i class="fas fa-signal text-xs"></i>
+        <i class="fas fa-wifi text-xs"></i>
+        <i class="fas fa-battery-three-quarters text-xs"></i>
+      </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <div
+      class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-100"
+    >
+      <button class="text-indigo-600 text-base font-medium">
+        <i class="fas fa-chevron-left mr-2"></i>Back
+      </button>
+      <h1 class="text-lg font-semibold text-gray-900">Settings</h1>
+      <div class="w-12"></div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="bg-white px-6 py-6 border-b border-gray-100">
+      <div class="flex items-center space-x-4">
+        <div
+          class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center"
+        >
+          <span class="text-white text-2xl font-bold">Q</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-semibold text-gray-900">Qin</h2>
+          <p class="text-gray-600">qinw.official@gmail.com</p>
+          <div class="flex items-center mt-1">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            <span class="text-sm text-green-600">Active Plan</span>
+          </div>
+        </div>
+        <button class="text-indigo-600">
+          <i class="fas fa-edit text-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- Health & Goals -->
+      <div class="bg-white mt-6 mx-6 rounded-2xl shadow-sm">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900">Health & Goals</h3>
+        </div>
+
+        <div class="space-y-0">
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-user text-blue-600"></i>
+              </div>
+              <span class="font-medium text-gray-900"
+                >Personal Information</span
+              >
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-target text-green-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Goals & Targets</span>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-heartbeat text-purple-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Health Metrics</span>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="bg-white mt-6 mx-6 rounded-2xl shadow-sm">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+        </div>
+
+        <div class="space-y-0">
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-bell text-orange-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Daily Reminders</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" checked />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"
+              ></div>
+            </label>
+          </div>
+
+          <div
+            class="px-5 py-4 flex items-center justify-between border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-dumbbell text-red-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Workout Reminders</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" checked />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"
+              ></div>
+            </label>
+          </div>
+
+          <div
+            class="px-5 py-4 flex items-center justify-between border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-lightbulb text-yellow-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Science Tips</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"
+              ></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- App Info -->
+      <div class="bg-white mt-6 mx-6 rounded-2xl shadow-sm">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900">App Information</h3>
+        </div>
+
+        <div class="space-y-0">
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-microscope text-indigo-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Scientific Sources</span>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-shield-alt text-gray-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Privacy Policy</span>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+
+          <button
+            class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 border-t border-gray-100"
+          >
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-question-circle text-gray-600"></i>
+              </div>
+              <span class="font-medium text-gray-900">Help & Support</span>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </button>
+
+          <div class="px-5 py-4 border-t border-gray-100">
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-info-circle text-gray-600"></i>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">Version</div>
+                <div class="text-sm text-gray-600">v1.0.0 (Beta)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign Out -->
+      <div class="mt-6 mx-6 mb-6">
+        <button
+          class="w-full bg-red-50 text-red-600 font-semibold py-4 rounded-2xl text-lg hover:bg-red-100 transition-colors"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="bg-white px-6 py-2 border-t border-gray-100">
+      <div class="flex justify-around">
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-comments text-lg mb-1"></i>
+          <span class="text-xs">Chat</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-clipboard-list text-lg mb-1"></i>
+          <span class="text-xs">Plan</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-gray-400">
+          <i class="fas fa-chart-line text-lg mb-1"></i>
+          <span class="text-xs">Progress</span>
+        </button>
+        <button class="flex flex-col items-center py-2 text-indigo-600">
+          <i class="fas fa-user text-lg mb-1"></i>
+          <span class="text-xs font-medium">Profile</span>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

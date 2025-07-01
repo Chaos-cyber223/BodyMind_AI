@@ -29,7 +29,7 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
         <View style={styles.header}>
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <Text style={styles.logoIcon}>🧠</Text>
+              <Text style={styles.logoIcon}>💪</Text>
             </View>
             <Text style={styles.appName}>BodyMind AI</Text>
             <Text style={styles.tagline}>Science-based fat loss, personalized for you</Text>

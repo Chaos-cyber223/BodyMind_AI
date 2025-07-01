@@ -32,7 +32,7 @@ Our core mission is to become your most trusted AI fat loss expert:
 ```mermaid
 graph TD
     subgraph "Client Layer"
-        A[React + TypeScript Web App]
+        A[React Native + TypeScript Mobile App]
     end
     
     subgraph "API Gateway"
@@ -88,7 +88,7 @@ graph TD
 
 ## 🛠️ Technology Stack
 
-* **Frontend**: `React`, `TypeScript`, `Vite`, `Axios`, `Tailwind CSS`
+* **Mobile App**: `React Native`, `TypeScript`, `Expo`, `Axios`, `NativeBase`
 * **Backend Business Layer**: `Java 17`, `Spring Boot 3`, `gRPC-Java`
 * **AI Core Services**: `Python 3.10`, `LangChain`, `FastAPI`, `gRPC-Python`, `Scrapy`
 * **Databases**: `ChromaDB`/`FAISS` (Vector DB), `PostgreSQL`/`MySQL` (Relational DB)
@@ -148,9 +148,57 @@ I'm passionate about backend engineering and cloud architecture (holding **AWS S
 * **Architecture Walkthrough**: [Coming Soon] - Video explanation of system design decisions
 * **Source Code**: Available in this repository with detailed documentation
 
+## 📁 Project Structure
+
+This project follows professional full-stack architecture with clear separation of concerns:
+
+```
+BodyMind_AI/
+├── 📱 mobile/              # React Native App with Google Material Design
+│   ├── screens/            # Welcome, Profile, Chat, Plan screens
+│   ├── components/         # Reusable UI components
+│   └── App.tsx            # Navigation & app entry point
+├── 🖥️ backend/             # Microservices architecture
+│   ├── ai-service/         # Python FastAPI + AI/ML logic
+│   └── api-service/        # Java Spring Boot + business logic
+├── 🔗 shared/              # Shared types and utilities
+├── 🏗️ infrastructure/       # Docker, deployment, and DevOps
+├── 📚 docs/                # Development guides and documentation
+├── 📦 package.json         # Monorepo configuration
+└── 🐳 docker-compose.yml   # Multi-service orchestration
+```
+
+**Current Status**: ✅ **Google-style Welcome Screen completed!**
+- Beautiful gradient background with Material Design principles
+- Interactive navigation between screens
+- Professional mobile-first responsive design
+
 ## 🚀 Quick Start
 
-Coming soon! The project is currently in active development.
+### Prerequisites
+- Node.js 18+
+- Expo CLI
+- Docker (optional, for full-stack development)
+
+### Development Mode
+
+**Option 1: Mobile App Only (Fastest)**
+```bash
+cd mobile
+npm install
+npm run web          # Browser: http://localhost:19006
+```
+
+**Option 2: Full Stack (Future)**
+```bash
+npm install          # Install root dependencies
+npm run dev          # Start all services with Docker
+```
+
+### View the App
+1. Open browser: `http://localhost:19006`
+2. Press **F12** → Toggle device toolbar → Select **iPhone 14 Pro**
+3. Experience the Google-style UI design!
 
 ## 📄 License
 
