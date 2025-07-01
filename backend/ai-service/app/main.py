@@ -5,7 +5,7 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from .api import chat, profile, analysis
+from .api import chat, profile, analysis, documents
 from .config import get_settings
 
 # Load environment variables
@@ -36,6 +36,7 @@ app.add_middleware(
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(profile.router, prefix="/api/profile", tags=["profile"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
+app.include_router(documents.router, prefix="/api/documents", tags=["documents"])
 
 @app.get("/")
 async def root():

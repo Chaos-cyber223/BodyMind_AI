@@ -1,10 +1,12 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 from functools import lru_cache
+import os
 
 class Settings(BaseSettings):
     # AI API Keys
     openai_api_key: str = ""
+    openai_api_base: Optional[str] = None
     anthropic_api_key: str = ""
     
     # Service Configuration

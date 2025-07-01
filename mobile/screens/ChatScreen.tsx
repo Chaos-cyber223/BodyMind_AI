@@ -13,6 +13,8 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import apiService from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,6 +24,7 @@ interface Message {
   sender: 'user' | 'ai' | 'system';
   timestamp: Date;
   status?: 'sending' | 'sent' | 'error';
+  sources?: string[];
 }
 
 interface ChatScreenProps {
@@ -29,25 +32,68 @@ interface ChatScreenProps {
 }
 
 export default function ChatScreen({ navigation }: ChatScreenProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I\'m your AI fat loss expert. I\'m here to help you achieve your goals with science-based advice. What would you like to know today?',
-      sender: 'ai',
-      timestamp: new Date(),
-      status: 'sent',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  // 自动滚动到底部
+  // Initialize chat on component mount
+  useEffect(() => {
+    initializeChat();
+    loadUserProfile();
+  }, []);
+
+  // Auto-scroll to bottom
   useEffect(() => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 100);
   }, [messages]);
+
+  const loadUserProfile = async () => {
+    try {
+      const profileData = await AsyncStorage.getItem('userProfile');
+      if (profileData) {
+        setUserProfile(JSON.parse(profileData));
+      }
+    } catch (error) {
+      console.error('Failed to load user profile:', error);
+    }
+  };
+
+  const initializeChat = async () => {
+    try {
+      // Check API health
+      const isHealthy = await apiService.healthCheck();
+      if (!isHealthy) {
+        throw new Error('API service is not available');
+      }
+
+      // Start new conversation
+      const { conversation_id, message } = await apiService.startNewConversation();
+      setConversationId(conversation_id);
+      
+      setMessages([{
+        id: '1',
+        text: message,
+        sender: 'ai',
+        timestamp: new Date(),
+        status: 'sent',
+      }]);
+    } catch (error) {
+      console.error('Failed to initialize chat:', error);
+      // Fallback to offline mode
+      setMessages([{
+        id: '1',
+        text: "Hello! I'm your AI fat loss expert. I'm currently offline but I can still provide basic guidance. What would you like to know about fat loss?",
+        sender: 'ai',
+        timestamp: new Date(),
+        status: 'sent',
+      }]);
+    }
+  };
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -64,15 +110,27 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
     setInputText('');
     setIsLoading(true);
 
-    // 模拟AI回复
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(inputText.trim());
+    try {
+      // Send message to API
+      const response = await apiService.sendMessage({
+        message: inputText.trim(),
+        user_profile: userProfile,
+        conversation_id: conversationId || undefined,
+      });
+
+      // Update conversation ID if not set
+      if (!conversationId) {
+        setConversationId(response.conversation_id);
+      }
+
+      // Update user message status and add AI response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiResponse,
+        text: response.response,
         sender: 'ai',
-        timestamp: new Date(),
+        timestamp: new Date(response.timestamp),
         status: 'sent',
+        sources: response.sources,
       };
 
       setMessages(prev => 
@@ -82,20 +140,36 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
             : msg
         ).concat(aiMessage)
       );
-      setIsLoading(false);
-    }, 1500);
-  };
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      
+      // Update message status to error
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === userMessage.id 
+            ? { ...msg, status: 'error' as const }
+            : msg
+        )
+      );
 
-  const generateAIResponse = (userInput: string): string => {
-    const responses = [
-      "Based on scientific research, I'd recommend focusing on a balanced approach. Studies show that combining proper nutrition with regular exercise yields the best long-term results for fat loss.",
-      "That's a great question! Research from the Journal of Nutrition suggests that meal timing can indeed impact fat loss, but the quality of your food choices matters more than when you eat.",
-      "I understand your concern. The key is sustainability - rapid weight loss often leads to muscle loss and metabolic slowdown. A gradual approach of 1-2 pounds per week is more effective long-term.",
-      "Excellent question! High-intensity interval training (HIIT) has been shown to be particularly effective for fat loss. Studies indicate it can burn more calories in less time compared to steady-state cardio.",
-      "That's a common misconception! While cardio is important, strength training is crucial for fat loss because it builds muscle, which increases your resting metabolic rate.",
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
+      // Show error alert
+      Alert.alert(
+        'Connection Error',
+        'Unable to send message. Please check your internet connection and try again.',
+        [
+          {
+            text: 'Retry',
+            onPress: () => sendMessage(),
+          },
+          {
+            text: 'OK',
+            style: 'cancel',
+          },
+        ]
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatTime = (date: Date): string => {
@@ -129,12 +203,26 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
           ]}>
             {message.text}
           </Text>
+          
+          {/* Show sources if available */}
+          {message.sources && message.sources.length > 0 && (
+            <View style={styles.sourcesContainer}>
+              <Text style={styles.sourcesTitle}>Sources:</Text>
+              {message.sources.map((source, index) => (
+                <Text key={index} style={styles.sourceText}>• {source}</Text>
+              ))}
+            </View>
+          )}
+          
           <View style={styles.messageFooter}>
-            <Text style={styles.messageTime}>
+            <Text style={[
+              styles.messageTime,
+              isUser && styles.userMessageTime
+            ]}>
               {formatTime(message.timestamp)}
             </Text>
             {message.status === 'sending' && (
-              <ActivityIndicator size="small" color="#4285f4" style={styles.statusIndicator} />
+              <ActivityIndicator size="small" color={isUser ? '#ffffff' : '#4285f4'} style={styles.statusIndicator} />
             )}
             {message.status === 'error' && (
               <Text style={styles.errorIndicator}>⚠️</Text>
@@ -161,19 +249,19 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
         
         <View style={styles.headerContent}>
           <View style={styles.aiAvatar}>
-            <Text style={styles.aiAvatarText}>💪</Text>
+            <Text style={styles.aiAvatarText}>🦾</Text>
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>AI Expert</Text>
+            <Text style={styles.headerTitle}>AI Fat Loss Expert</Text>
             <Text style={styles.headerSubtitle}>
-              {isLoading ? 'Typing...' : 'Online'}
+              {isLoading ? 'Analyzing...' : 'Powered by LangChain RAG'}
             </Text>
           </View>
         </View>
         
         <TouchableOpacity
           style={styles.settingsButton}
-          onPress={() => Alert.alert('Settings', 'Settings coming soon!')}
+          onPress={() => navigation.navigate('Settings')}
           activeOpacity={0.7}
         >
           <Text style={styles.settingsButtonText}>⚙️</Text>
@@ -199,7 +287,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
               <View style={styles.aiMessageBubble}>
                 <View style={styles.typingIndicator}>
                   <ActivityIndicator size="small" color="#4285f4" />
-                  <Text style={styles.typingText}>AI is thinking...</Text>
+                  <Text style={styles.typingText}>AI is analyzing scientific research...</Text>
                 </View>
               </View>
             </View>
@@ -211,7 +299,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.textInput}
-              placeholder="Ask me anything about fat loss..."
+              placeholder="Ask about diet, exercise, or fat loss..."
               placeholderTextColor="#9aa0a6"
               value={inputText}
               onChangeText={setInputText}
@@ -223,7 +311,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
             <View style={styles.inputActions}>
               <TouchableOpacity
                 style={styles.voiceButton}
-                onPress={() => Alert.alert('Voice', 'Voice input coming soon!')}
+                onPress={() => Alert.alert('Voice Input', 'Voice input coming soon!')}
                 activeOpacity={0.7}
               >
                 <Text style={styles.voiceButtonText}>🎤</Text>
@@ -247,6 +335,30 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
               </TouchableOpacity>
             </View>
           </View>
+          
+          {/* Quick Actions */}
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.quickActions}
+            contentContainerStyle={styles.quickActionsContent}
+          >
+            {[
+              "How much protein should I eat?",
+              "Best exercises for fat loss",
+              "Why am I not losing weight?",
+              "HIIT vs cardio",
+            ].map((question, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.quickActionButton}
+                onPress={() => setInputText(question)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.quickActionText}>{question}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -315,7 +427,7 @@ const styles = StyleSheet.create({
     color: '#202124',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#5f6368',
     marginTop: 2,
   },
@@ -393,12 +505,34 @@ const styles = StyleSheet.create({
     color: '#9aa0a6',
     marginRight: 4,
   },
+  userMessageTime: {
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
   statusIndicator: {
     marginLeft: 4,
   },
   errorIndicator: {
     fontSize: 12,
     marginLeft: 4,
+  },
+  
+  // Sources
+  sourcesContainer: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  sourcesTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#5f6368',
+    marginBottom: 4,
+  },
+  sourceText: {
+    fontSize: 11,
+    color: '#5f6368',
+    marginBottom: 2,
   },
   
   // System Messages
@@ -487,4 +621,23 @@ const styles = StyleSheet.create({
   sendButtonTextDisabled: {
     color: '#9aa0a6',
   },
-}); 
+  
+  // Quick Actions
+  quickActions: {
+    marginTop: 8,
+  },
+  quickActionsContent: {
+    paddingRight: 16,
+  },
+  quickActionButton: {
+    backgroundColor: '#f1f3f4',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  quickActionText: {
+    fontSize: 14,
+    color: '#5f6368',
+  },
+});

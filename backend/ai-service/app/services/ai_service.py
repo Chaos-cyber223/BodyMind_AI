@@ -1,16 +1,30 @@
-import openai
 from typing import Optional, Dict, Any
 import json
+import logging
+import os
+
+from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
 
 from ..config import get_settings
 from ..models.chat import ChatResponse
 from .rag_service import RAGService
 
+logger = logging.getLogger(__name__)
+
 class AIService:
     def __init__(self):
         self.settings = get_settings()
-        openai.api_key = self.settings.openai_api_key
         self.rag_service = RAGService()
+        
+        # Initialize LLM with SiliconFlow API
+        self.llm = ChatOpenAI(
+            openai_api_key=self.settings.openai_api_key,
+            openai_api_base=os.getenv("OPENAI_API_BASE", "https://api.siliconflow.cn/v1"),
+            model_name=self.settings.default_model,
+            temperature=self.settings.temperature,
+            max_tokens=self.settings.max_tokens
+        )
         
     async def get_chat_response(
         self, 
@@ -23,27 +37,41 @@ class AIService:
         """
         try:
             # Get relevant knowledge from RAG
-            rag_context = await self.rag_service.get_relevant_context(message)
+            rag_context = await self.rag_service.get_relevant_context(message, conversation_id)
             
-            # Build system prompt
-            system_prompt = self._build_system_prompt(user_profile, rag_context)
-            
-            # Build messages
-            messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": message}
-            ]
-            
-            # Get AI response
-            response = await openai.ChatCompletion.acreate(
-                model=self.settings.default_model,
-                messages=messages,
-                max_tokens=self.settings.max_tokens,
-                temperature=self.settings.temperature
-            )
-            
-            content = response.choices[0].message.content
-            sources = rag_context.get("sources", []) if rag_context else []
+            # If RAG provided an answer, use it directly
+            if rag_context and rag_context.get("content"):
+                # Build a refined prompt to enhance the RAG answer
+                system_prompt = self._build_system_prompt(user_profile)
+                
+                messages = [
+                    SystemMessage(content=system_prompt),
+                    HumanMessage(content=f"""Based on the following scientific research, please provide a comprehensive and personalized answer to the user's question.
+
+Research Context:
+{rag_context['content']}
+
+User Question: {message}
+
+Please provide a detailed, actionable response that incorporates the research findings and is tailored to the user's profile.""")
+                ]
+                
+                # Get enhanced response
+                response = await self.llm.agenerate([messages])
+                content = response.generations[0][0].text
+                sources = rag_context.get("sources", [])
+            else:
+                # Fallback to general knowledge without RAG
+                system_prompt = self._build_system_prompt(user_profile)
+                
+                messages = [
+                    SystemMessage(content=system_prompt),
+                    HumanMessage(content=message)
+                ]
+                
+                response = await self.llm.agenerate([messages])
+                content = response.generations[0][0].text
+                sources = []
             
             return ChatResponse(
                 content=content,
@@ -52,6 +80,7 @@ class AIService:
             )
             
         except Exception as e:
+            logger.error(f"Error in get_chat_response: {str(e)}")
             # Fallback response
             return ChatResponse(
                 content=f"I apologize, but I'm having trouble processing your request right now. Could you please try again? Error: {str(e)}",
@@ -59,7 +88,7 @@ class AIService:
                 conversation_id=conversation_id
             )
     
-    def _build_system_prompt(self, user_profile: Optional[Dict], rag_context: Optional[Dict]) -> str:
+    def _build_system_prompt(self, user_profile: Optional[Dict]) -> str:
         """
         Build comprehensive system prompt for the AI
         """
@@ -96,16 +125,6 @@ Personalize your advice based on this profile."""
 
             base_prompt += user_context
 
-        # Add scientific context from RAG
-        if rag_context and rag_context.get("content"):
-            scientific_context = f"""
-
-Relevant Scientific Research:
-{rag_context['content']}
-
-Use this research to support your recommendations and cite sources when appropriate."""
-            
-            base_prompt += scientific_context
 
         base_prompt += """
 

@@ -14,6 +14,7 @@ backend/ai-service/AI_SERVICE_PLAN.md
 # 🚫 项目结构和配置文档 (不要提交到GitHub)
 PROJECT_STRUCTURE.md
 docker-compose.yml
+CLAUDE.md
 
 # ================================
 # React Native / Expo
