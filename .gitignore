@@ -1,0 +1,213 @@
+# ================================
+# BodyMind_AI Project .gitignore
+# ================================
+
+# 🚫 开发计划文档 (不要提交到GitHub)
+docs/DEVELOPMENT_PLAN.md
+docs/REACT_NATIVE_GUIDE.md
+dev-plan.md
+development-roadmap.md
+rn-guide.md
+mobile-dev-guide.md
+
+# 🚫 项目结构和配置文档 (不要提交到GitHub)
+PROJECT_STRUCTURE.md
+docker-compose.yml
+
+# ================================
+# React Native / Expo
+# ================================
+node_modules/
+*.log
+*.tgz
+*.tar.gz
+.DS_Store
+.vscode/
+.idea/
+
+# Expo
+.expo/
+dist/
+web-build/
+.expo-shared/
+
+# React Native
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+ios/.xcode.env.local
+
+# Android
+*.apk
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+.gradle/
+local.properties
+*.iml
+.externalNativeBuild
+.cxx/
+android/.settings/
+android/app/debug/
+android/keystores/debug.keystore
+
+# ================================
+# Python / AI Services
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# AI Models & Data
+*.pkl
+*.joblib
+*.h5
+*.pb
+models/
+data/
+datasets/
+*.csv
+*.json
+vector_store/
+knowledge_base/
+
+# ================================
+# Java / Spring Boot
+# ================================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Boot
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ================================
+# Database & Environment
+# ================================
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database.sql
+
+# ================================
+# Docker & DevOps
+# ================================
+.dockerignore
+docker-compose.override.yml
+*.log
+
+# AWS & Cloud
+.aws/
+*.pem
+*.key
+
+# ================================
+# IDE & Editors
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-*
+
+# ================================
+# OS Generated
+# ================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ================================
+# Logs & Temporary Files
+# ================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ================================
+# Testing & Coverage
+# ================================
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+.pytest_cache/
+.cache/
+
+# ================================
+# Package Managers
+# ================================
+package-lock.json
+yarn.lock
+.yarn/
+.pnp.*
+
+# ================================
+# Misc
+# ================================
+*.tgz
+*.tar.gz
+.npm
+.eslintcache
+.stylelintcache 
