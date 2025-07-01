@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import apiService from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from '../localization/i18n';
+import LanguageToggle from '../components/LanguageToggle';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +34,7 @@ interface ChatScreenProps {
 }
 
 export default function ChatScreen({ navigation }: ChatScreenProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +90,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
       // Fallback to offline mode
       setMessages([{
         id: '1',
-        text: "Hello! I'm your AI fat loss expert. I'm currently offline but I can still provide basic guidance. What would you like to know about fat loss?",
+        text: t('chat.connectionErrorMessage'),
         sender: 'ai',
         timestamp: new Date(),
         status: 'sent',
@@ -154,15 +157,15 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
 
       // Show error alert
       Alert.alert(
-        'Connection Error',
-        'Unable to send message. Please check your internet connection and try again.',
+        t('chat.connectionError'),
+        t('chat.connectionErrorMessage'),
         [
           {
-            text: 'Retry',
+            text: t('chat.retry'),
             onPress: () => sendMessage(),
           },
           {
-            text: 'OK',
+            text: t('chat.ok'),
             style: 'cancel',
           },
         ]
@@ -207,7 +210,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
           {/* Show sources if available */}
           {message.sources && message.sources.length > 0 && (
             <View style={styles.sourcesContainer}>
-              <Text style={styles.sourcesTitle}>Sources:</Text>
+              <Text style={styles.sourcesTitle}>{t('chat.sources')}</Text>
               {message.sources.map((source, index) => (
                 <Text key={index} style={styles.sourceText}>• {source}</Text>
               ))}
@@ -252,20 +255,14 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
             <Text style={styles.aiAvatarText}>🦾</Text>
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>AI Fat Loss Expert</Text>
+            <Text style={styles.headerTitle}>{t('chat.title')}</Text>
             <Text style={styles.headerSubtitle}>
-              {isLoading ? 'Analyzing...' : 'Powered by LangChain RAG'}
+              {isLoading ? t('chat.analyzing') : t('chat.subtitle')}
             </Text>
           </View>
         </View>
         
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => navigation.navigate('Settings')}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.settingsButtonText}>⚙️</Text>
-        </TouchableOpacity>
+        <LanguageToggle size="small" />
       </View>
 
       {/* Chat Messages */}
@@ -287,7 +284,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
               <View style={styles.aiMessageBubble}>
                 <View style={styles.typingIndicator}>
                   <ActivityIndicator size="small" color="#4285f4" />
-                  <Text style={styles.typingText}>AI is analyzing scientific research...</Text>
+                  <Text style={styles.typingText}>{t('chat.typingIndicator')}</Text>
                 </View>
               </View>
             </View>
@@ -299,7 +296,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.textInput}
-              placeholder="Ask about diet, exercise, or fat loss..."
+              placeholder={t('chat.placeholder')}
               placeholderTextColor="#9aa0a6"
               value={inputText}
               onChangeText={setInputText}
@@ -311,7 +308,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
             <View style={styles.inputActions}>
               <TouchableOpacity
                 style={styles.voiceButton}
-                onPress={() => Alert.alert('Voice Input', 'Voice input coming soon!')}
+                onPress={() => Alert.alert(t('chat.voiceInput'), t('chat.voiceInputSoon'))}
                 activeOpacity={0.7}
               >
                 <Text style={styles.voiceButtonText}>🎤</Text>
@@ -344,10 +341,10 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
             contentContainerStyle={styles.quickActionsContent}
           >
             {[
-              "How much protein should I eat?",
-              "Best exercises for fat loss",
-              "Why am I not losing weight?",
-              "HIIT vs cardio",
+              t('chat.quickActions.protein'),
+              t('chat.quickActions.exercise'),
+              t('chat.quickActions.plateau'),
+              t('chat.quickActions.hiit'),
             ].map((question, index) => (
               <TouchableOpacity
                 key={index}

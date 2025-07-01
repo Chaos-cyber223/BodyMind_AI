@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -7,10 +7,18 @@ import { StatusBar } from 'expo-status-bar';
 import WelcomeScreen from './screens/WelcomeScreen';
 import ProfileSetupScreen from './screens/ProfileSetupScreen';
 import ChatScreen from './screens/ChatScreen';
+import MealPlanScreen from './screens/MealPlanScreen';
+
+// 导入i18n系统
+import i18n from './localization/i18n';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  // 初始化i18n系统
+  useEffect(() => {
+    i18n.initialize();
+  }, []);
   return (
     <NavigationContainer>
       <StatusBar style="light" />
@@ -55,6 +63,13 @@ export default function App() {
             headerTitleStyle: {
               fontWeight: 'bold',
             },
+          }}
+        />
+        <Stack.Screen 
+          name="MealPlan" 
+          component={MealPlanScreen}
+          options={{
+            headerShown: false,
           }}
         />
       </Stack.Navigator>

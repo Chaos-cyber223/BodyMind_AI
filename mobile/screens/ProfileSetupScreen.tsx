@@ -10,6 +10,8 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
+import { useTranslation } from '../localization/i18n';
+import LanguageToggle from '../components/LanguageToggle';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,6 +42,7 @@ interface UserProfile {
 }
 
 export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenProps) {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [profile, setProfile] = useState<UserProfile>({
     age: '',
@@ -63,19 +66,19 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
   // Step 1: Basic Information
   const renderBasicInfo = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Basic Information</Text>
-      <Text style={styles.stepSubtitle}>Help us understand your current situation</Text>
+      <Text style={styles.stepTitle}>{t('profile.step1.title')}</Text>
+      <Text style={styles.stepSubtitle}>{t('profile.step1.subtitle')}</Text>
       
       {/* Unit System Selection */}
       <View style={styles.unitSelector}>
-        <Text style={styles.sectionLabel}>Unit System</Text>
+        <Text style={styles.sectionLabel}>{t('profile.unitSystem')}</Text>
         <View style={styles.unitButtons}>
           <TouchableOpacity
             style={[styles.unitButton, unitSystem === 'metric' && styles.unitButtonActive]}
             onPress={() => setUnitSystem('metric')}
           >
             <Text style={[styles.unitButtonText, unitSystem === 'metric' && styles.unitButtonTextActive]}>
-              Metric (cm/kg)
+              {t('profile.metric')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -83,7 +86,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
             onPress={() => setUnitSystem('imperial')}
           >
             <Text style={[styles.unitButtonText, unitSystem === 'imperial' && styles.unitButtonTextActive]}>
-              Imperial (in/lbs)
+              {t('profile.imperial')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -91,12 +94,12 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Age */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Age</Text>
+        <Text style={styles.inputLabel}>{t('profile.age')}</Text>
         <TextInput
           style={styles.textInput}
           value={profile.age}
           onChangeText={(text) => setProfile({...profile, age: text})}
-          placeholder="Enter your age"
+          placeholder={t('profile.agePlaceholder')}
           keyboardType="numeric"
           maxLength={3}
         />
@@ -104,7 +107,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Gender */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Gender</Text>
+        <Text style={styles.inputLabel}>{t('profile.gender')}</Text>
         <View style={styles.genderButtons}>
           {['male', 'female', 'other'].map((gender) => (
             <TouchableOpacity
@@ -113,7 +116,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
               onPress={() => setProfile({...profile, gender: gender as any})}
             >
               <Text style={[styles.genderButtonText, profile.gender === gender && styles.genderButtonTextActive]}>
-                {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                {t(`profile.${gender}`)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -122,47 +125,47 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Height */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Height ({unitSystem === 'metric' ? 'cm' : 'inches'})</Text>
+        <Text style={styles.inputLabel}>{t('profile.height')} ({unitSystem === 'metric' ? 'cm' : 'inches'})</Text>
         <TextInput
           style={styles.textInput}
           value={profile.height}
           onChangeText={(text) => setProfile({...profile, height: text})}
-          placeholder={unitSystem === 'metric' ? 'e.g., 170' : 'e.g., 67'}
+          placeholder={unitSystem === 'metric' ? t('profile.heightPlaceholderMetric') : t('profile.heightPlaceholderImperial')}
           keyboardType="numeric"
         />
       </View>
 
       {/* Weight */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Current Weight ({unitSystem === 'metric' ? 'kg' : 'lbs'})</Text>
+        <Text style={styles.inputLabel}>{t('profile.currentWeight')} ({unitSystem === 'metric' ? 'kg' : 'lbs'})</Text>
         <TextInput
           style={styles.textInput}
           value={profile.currentWeight}
           onChangeText={(text) => setProfile({...profile, currentWeight: text})}
-          placeholder={unitSystem === 'metric' ? 'e.g., 70' : 'e.g., 154'}
+          placeholder={unitSystem === 'metric' ? t('profile.weightPlaceholderMetric') : t('profile.weightPlaceholderImperial')}
           keyboardType="numeric"
         />
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Target Weight ({unitSystem === 'metric' ? 'kg' : 'lbs'})</Text>
+        <Text style={styles.inputLabel}>{t('profile.targetWeight')} ({unitSystem === 'metric' ? 'kg' : 'lbs'})</Text>
         <TextInput
           style={styles.textInput}
           value={profile.targetWeight}
           onChangeText={(text) => setProfile({...profile, targetWeight: text})}
-          placeholder={unitSystem === 'metric' ? 'e.g., 65' : 'e.g., 143'}
+          placeholder={unitSystem === 'metric' ? t('profile.targetWeightPlaceholderMetric') : t('profile.targetWeightPlaceholderImperial')}
           keyboardType="numeric"
         />
       </View>
 
       {/* Activity Level */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Activity Level</Text>
+        <Text style={styles.inputLabel}>{t('profile.activityLevel')}</Text>
         {[
-          {key: 'sedentary', label: 'Sedentary', desc: 'Little or no exercise'},
-          {key: 'light', label: 'Light', desc: 'Light exercise 1-3 days/week'},
-          {key: 'moderate', label: 'Moderate', desc: 'Moderate exercise 3-5 days/week'},
-          {key: 'very_active', label: 'Very Active', desc: 'Hard exercise 6-7 days/week'},
+          {key: 'sedentary', label: t('profile.sedentary'), desc: t('profile.sedentaryDesc')},
+          {key: 'light', label: t('profile.light'), desc: t('profile.lightDesc')},
+          {key: 'moderate', label: t('profile.moderate'), desc: t('profile.moderateDesc')},
+          {key: 'very_active', label: t('profile.veryActive'), desc: t('profile.veryActiveDesc')},
         ].map((activity) => (
           <TouchableOpacity
             key={activity.key}
@@ -191,16 +194,16 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
   // Step 2: Goals & Exercise Preferences
   const renderGoalsAndExercise = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Goals & Exercise</Text>
-      <Text style={styles.stepSubtitle}>Tell us about your fitness goals and preferences</Text>
+      <Text style={styles.stepTitle}>{t('profile.step2.title')}</Text>
+      <Text style={styles.stepSubtitle}>{t('profile.step2.subtitle')}</Text>
 
       {/* Weight Loss Goal */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Weight Loss Goal</Text>
+        <Text style={styles.inputLabel}>{t('profile.weightLossGoal')}</Text>
         {[
-          {key: 'slow', label: 'Slow & Steady', desc: '0.25-0.5 kg/week'},
-          {key: 'moderate', label: 'Moderate', desc: '0.5-1 kg/week'},
-          {key: 'fast', label: 'Faster', desc: '1-1.5 kg/week'},
+          {key: 'slow', label: t('profile.slow'), desc: t('profile.slowDesc')},
+          {key: 'moderate', label: t('profile.moderateGoal'), desc: t('profile.moderateGoalDesc')},
+          {key: 'fast', label: t('profile.fast'), desc: t('profile.fastDesc')},
         ].map((goal) => (
           <TouchableOpacity
             key={goal.key}
@@ -226,12 +229,12 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Exercise Experience */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Exercise Experience</Text>
+        <Text style={styles.inputLabel}>{t('profile.exerciseExperience')}</Text>
         {[
-          {key: 'beginner', label: 'Beginner', desc: 'New to exercise'},
-          {key: 'intermediate', label: 'Intermediate', desc: 'Some experience'},
-          {key: 'advanced', label: 'Advanced', desc: 'Regular exerciser'},
-          {key: 'expert', label: 'Expert', desc: 'Very experienced'},
+          {key: 'beginner', label: t('profile.beginner'), desc: t('profile.beginnerDesc')},
+          {key: 'intermediate', label: t('profile.intermediate'), desc: t('profile.intermediateDesc')},
+          {key: 'advanced', label: t('profile.advanced'), desc: t('profile.advancedDesc')},
+          {key: 'expert', label: t('profile.expert'), desc: t('profile.expertDesc')},
         ].map((exp) => (
           <TouchableOpacity
             key={exp.key}
@@ -257,13 +260,13 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Exercise Frequency */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Weekly Exercise Frequency</Text>
+        <Text style={styles.inputLabel}>{t('profile.exerciseFrequency')}</Text>
         {[
-          {key: 'never', label: 'Never', desc: 'No exercise'},
-          {key: 'occasionally', label: 'Occasionally', desc: '1-2 times/week'},
-          {key: 'regular', label: 'Regular', desc: '3-4 times/week'},
-          {key: 'frequent', label: 'Frequent', desc: '5-6 times/week'},
-          {key: 'daily', label: 'Daily', desc: 'Every day'},
+          {key: 'never', label: t('profile.never'), desc: t('profile.neverDesc')},
+          {key: 'occasionally', label: t('profile.occasionally'), desc: t('profile.occasionallyDesc')},
+          {key: 'regular', label: t('profile.regular'), desc: t('profile.regularDesc')},
+          {key: 'frequent', label: t('profile.frequent'), desc: t('profile.frequentDesc')},
+          {key: 'daily', label: t('profile.daily'), desc: t('profile.dailyDesc')},
         ].map((freq) => (
           <TouchableOpacity
             key={freq.key}
@@ -289,12 +292,12 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
 
       {/* Exercise Duration */}
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Exercise Duration</Text>
+        <Text style={styles.inputLabel}>{t('profile.exerciseDuration')}</Text>
         {[
-          {key: '15-30min', label: '15-30 minutes'},
-          {key: '30-45min', label: '30-45 minutes'},
-          {key: '45-60min', label: '45-60 minutes'},
-          {key: '60min+', label: '60+ minutes'},
+          {key: '15-30min', label: t('profile.duration15')},
+          {key: '30-45min', label: t('profile.duration30')},
+          {key: '45-60min', label: t('profile.duration45')},
+          {key: '60min+', label: t('profile.duration60')},
         ].map((duration) => (
           <TouchableOpacity
             key={duration.key}
@@ -318,40 +321,40 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
   // Step 3: Health Information (Optional)
   const renderHealthInfo = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>Health Information</Text>
-      <Text style={styles.stepSubtitle}>Optional - Help us provide better recommendations</Text>
+      <Text style={styles.stepTitle}>{t('profile.step3.title')}</Text>
+      <Text style={styles.stepSubtitle}>{t('profile.step3.subtitle')}</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Health Conditions (Optional)</Text>
+        <Text style={styles.inputLabel}>{t('profile.healthConditions')}</Text>
         <TextInput
           style={[styles.textInput, styles.textArea]}
           value={profile.healthConditions}
           onChangeText={(text) => setProfile({...profile, healthConditions: text})}
-          placeholder="Any health conditions we should know about?"
+          placeholder={t('profile.healthConditionsPlaceholder')}
           multiline
           numberOfLines={3}
         />
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Food Allergies (Optional)</Text>
+        <Text style={styles.inputLabel}>{t('profile.allergies')}</Text>
         <TextInput
           style={[styles.textInput, styles.textArea]}
           value={profile.allergies}
           onChangeText={(text) => setProfile({...profile, allergies: text})}
-          placeholder="Any food allergies or intolerances?"
+          placeholder={t('profile.allergiesPlaceholder')}
           multiline
           numberOfLines={3}
         />
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.inputLabel}>Medications (Optional)</Text>
+        <Text style={styles.inputLabel}>{t('profile.medications')}</Text>
         <TextInput
           style={[styles.textInput, styles.textArea]}
           value={profile.medications}
           onChangeText={(text) => setProfile({...profile, medications: text})}
-          placeholder="Any medications you're currently taking?"
+          placeholder={t('profile.medicationsPlaceholder')}
           multiline
           numberOfLines={3}
         />
@@ -365,11 +368,11 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
     } else {
       // Complete profile setup
       Alert.alert(
-        'Profile Complete!',
-        'Your personalized plan is being generated...',
+        t('profile.completeTitle'),
+        t('profile.completeMessage'),
         [
           {
-            text: 'Continue',
+            text: t('profile.continue'),
             onPress: () => navigation.navigate('Chat')
           }
         ]
@@ -407,8 +410,8 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile Setup</Text>
-        <View style={styles.headerSpacer} />
+        <Text style={styles.headerTitle}>{t('profile.title')}</Text>
+        <LanguageToggle size="small" />
       </View>
 
       {/* Progress Indicator */}
@@ -416,7 +419,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: `${(currentStep / 3) * 100}%` }]} />
         </View>
-        <Text style={styles.progressText}>Step {currentStep} of 3</Text>
+        <Text style={styles.progressText}>{t('profile.step', { current: currentStep, total: 3 })}</Text>
       </View>
 
       <ScrollView 
@@ -435,7 +438,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
           activeOpacity={0.8}
         >
           <Text style={styles.nextButtonText}>
-            {currentStep === 3 ? 'Complete Setup' : 'Next'}
+            {currentStep === 3 ? t('profile.complete') : t('profile.next')}
           </Text>
         </TouchableOpacity>
       </View>

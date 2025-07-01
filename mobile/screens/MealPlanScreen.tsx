@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import apiService from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from '../localization/i18n';
+import LanguageToggle from '../components/LanguageToggle';
 
 const { width, height } = Dimensions.get('window');
 
@@ -45,6 +47,7 @@ interface FoodEntry {
 }
 
 export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
+  const { t } = useTranslation();
   const [nutritionData, setNutritionData] = useState<NutritionData>({
     calories: 1240,
     targetCalories: 1650,
@@ -134,9 +137,9 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
         setRecentEntries(prev => [entry, ...prev].slice(0, 5));
 
         Alert.alert(
-          'Food Logged Successfully!',
-          `Added ${foodResponse.total_calories} calories from: ${entry.description}`,
-          [{ text: 'OK' }]
+          t('mealPlan.foodLoggedSuccess'),
+          t('mealPlan.foodLoggedMessage', { calories: foodResponse.total_calories, description: entry.description }),
+          [{ text: t('chat.ok') }]
         );
       }
 
@@ -158,9 +161,9 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
         });
 
         Alert.alert(
-          'Exercise Logged Successfully!',
-          `Burned ${exerciseResponse.total_calories_burned} calories from ${exerciseResponse.total_duration_minutes} minutes of exercise`,
-          [{ text: 'OK' }]
+          t('mealPlan.exerciseLoggedSuccess'),
+          t('mealPlan.exerciseLoggedMessage', { calories: exerciseResponse.total_calories_burned, duration: exerciseResponse.total_duration_minutes }),
+          [{ text: t('chat.ok') }]
         );
       }
 
@@ -168,9 +171,9 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
     } catch (error) {
       console.error('AI logging failed:', error);
       Alert.alert(
-        'Processing Error',
-        'Unable to process your input. Please try again or be more specific.',
-        [{ text: 'OK' }]
+        t('mealPlan.processingError'),
+        t('mealPlan.processingErrorMessage'),
+        [{ text: t('chat.ok') }]
       );
     } finally {
       setIsProcessing(false);
@@ -197,27 +200,23 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
       <View style={styles.headerContainer}>
         <View style={styles.headerTop}>
           <View>
-            <Text style={styles.headerTitle}>Your Personal Plan</Text>
-            <Text style={styles.headerSubtitle}>Science-backed strategy</Text>
+            <Text style={styles.headerTitle}>{t('mealPlan.title')}</Text>
+            <Text style={styles.headerSubtitle}>{t('mealPlan.subtitle')}</Text>
           </View>
-          <TouchableOpacity style={styles.profileButton}>
-            <Text style={styles.profileInitial}>
-              {userProfile?.name ? userProfile.name[0].toUpperCase() : 'U'}
-            </Text>
-          </TouchableOpacity>
+          <LanguageToggle size="small" variant="outline" />
         </View>
 
         {/* Goal Progress */}
         <View style={styles.goalProgress}>
           <View style={styles.goalHeader}>
-            <Text style={styles.goalLabel}>Goal Progress</Text>
-            <Text style={styles.goalWeek}>Week 2 of 12</Text>
+            <Text style={styles.goalLabel}>{t('mealPlan.goalProgress')}</Text>
+            <Text style={styles.goalWeek}>{t('mealPlan.week', { current: 2, total: 12 })}</Text>
           </View>
           <View style={styles.progressInfo}>
             <View style={styles.progressBarContainer}>
               <View style={styles.progressLabels}>
-                <Text style={styles.progressText}>Current: 68.5kg</Text>
-                <Text style={styles.progressText}>Target: 65kg</Text>
+                <Text style={styles.progressText}>{t('mealPlan.current', { weight: 68.5 })}</Text>
+                <Text style={styles.progressText}>{t('mealPlan.target', { weight: 65 })}</Text>
               </View>
               <View style={styles.progressBar}>
                 <View style={[styles.progressFill, { width: '43%' }]} />
@@ -225,7 +224,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
             </View>
             <View style={styles.progressStats}>
               <Text style={styles.progressNumber}>-1.5</Text>
-              <Text style={styles.progressUnit}>kg lost</Text>
+              <Text style={styles.progressUnit}>{t('mealPlan.kgLost')}</Text>
             </View>
           </View>
         </View>
@@ -235,16 +234,16 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
         {/* AI Smart Logging */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>AI Smart Logging</Text>
+            <Text style={styles.sectionTitle}>{t('mealPlan.aiLogging')}</Text>
             <View style={styles.aiBadge}>
-              <Text style={styles.aiBadgeText}>🧠 AI Powered</Text>
+              <Text style={styles.aiBadgeText}>{t('mealPlan.aiPowered')}</Text>
             </View>
           </View>
 
           {/* Recent AI Entries */}
           {recentEntries.length > 0 && (
             <View style={styles.recentEntries}>
-              <Text style={styles.recentTitle}>Recent entries:</Text>
+              <Text style={styles.recentTitle}>{t('mealPlan.recentEntries')}</Text>
               {recentEntries.map(entry => (
                 <View key={entry.id} style={styles.recentEntry}>
                   <Text style={styles.recentEntryText}>
@@ -262,7 +261,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
           <View style={styles.aiInputContainer}>
             <TextInput
               style={styles.aiInput}
-              placeholder="Tell AI what you ate or exercised..."
+              placeholder={t('mealPlan.aiPlaceholder')}
               placeholderTextColor="#9ca3af"
               value={aiInput}
               onChangeText={setAiInput}
@@ -284,28 +283,28 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
 
           {/* AI Tips */}
           <View style={styles.aiTips}>
-            <Text style={styles.aiTipsTitle}>💡 AI Logging Tips</Text>
-            <Text style={styles.aiTip}>• "Had oatmeal for breakfast"</Text>
-            <Text style={styles.aiTip}>• "Ran for 30 minutes"</Text>
-            <Text style={styles.aiTip}>• "Ate a chicken salad and went to gym"</Text>
+            <Text style={styles.aiTipsTitle}>{t('mealPlan.aiTipsTitle')}</Text>
+            <Text style={styles.aiTip}>{t('mealPlan.aiTip1')}</Text>
+            <Text style={styles.aiTip}>{t('mealPlan.aiTip2')}</Text>
+            <Text style={styles.aiTip}>{t('mealPlan.aiTip3')}</Text>
           </View>
         </View>
 
         {/* Today's Nutrition */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Today's Nutrition</Text>
+            <Text style={styles.sectionTitle}>{t('mealPlan.nutrition')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-              <Text style={styles.linkText}>💬 Chat to Update</Text>
+              <Text style={styles.linkText}>{t('mealPlan.chatToUpdate')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Calorie Progress */}
           <View style={styles.calorieProgress}>
             <View style={styles.calorieHeader}>
-              <Text style={styles.calorieLabel}>Calories</Text>
+              <Text style={styles.calorieLabel}>{t('mealPlan.calories')}</Text>
               <Text style={styles.calorieNumbers}>
-                {nutritionData.calories} / {nutritionData.targetCalories} kcal
+                {t('mealPlan.caloriesFormat', { current: nutritionData.calories, target: nutritionData.targetCalories })}
               </Text>
             </View>
             <View style={styles.calorieBar}>
@@ -329,7 +328,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
                   </Text>
                 </View>
               </View>
-              <Text style={styles.macroName}>Protein</Text>
+              <Text style={styles.macroName}>{t('mealPlan.protein')}</Text>
               <Text style={styles.macroAmount}>
                 {nutritionData.protein.current}/{nutritionData.protein.target}g
               </Text>
@@ -344,7 +343,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
                   </Text>
                 </View>
               </View>
-              <Text style={styles.macroName}>Carbs</Text>
+              <Text style={styles.macroName}>{t('mealPlan.carbs')}</Text>
               <Text style={styles.macroAmount}>
                 {nutritionData.carbs.current}/{nutritionData.carbs.target}g
               </Text>
@@ -359,7 +358,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
                   </Text>
                 </View>
               </View>
-              <Text style={styles.macroName}>Fats</Text>
+              <Text style={styles.macroName}>{t('mealPlan.fats')}</Text>
               <Text style={styles.macroAmount}>
                 {nutritionData.fats.current}/{nutritionData.fats.target}g
               </Text>
@@ -370,10 +369,10 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
         {/* Today's Workout */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Today's Workout</Text>
+            <Text style={styles.sectionTitle}>{t('mealPlan.workout')}</Text>
             <View style={styles.workoutBadges}>
               <View style={styles.workoutBadge}>
-                <Text style={styles.workoutBadgeText}>🧠 AI Generated</Text>
+                <Text style={styles.workoutBadgeText}>{t('mealPlan.aiGenerated')}</Text>
               </View>
             </View>
           </View>
@@ -414,7 +413,7 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
           <View style={styles.aiSuggestion}>
             <Text style={styles.suggestionIcon}>✨</Text>
             <Text style={styles.suggestionText}>
-              AI Suggestion: Complete the Plank exercise for a balanced workout!
+              {t('mealPlan.aiSuggestion')}
             </Text>
           </View>
         </View>
@@ -424,9 +423,9 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
           <View style={styles.scienceTip}>
             <Text style={styles.scienceIcon}>🔬</Text>
             <View style={styles.scienceContent}>
-              <Text style={styles.scienceTitle}>Latest Research</Text>
+              <Text style={styles.scienceTitle}>{t('mealPlan.latestResearch')}</Text>
               <Text style={styles.scienceText}>
-                Combined strength + cardio training increases fat loss by 28% compared to cardio alone
+                {t('mealPlan.researchText')}
               </Text>
             </View>
           </View>

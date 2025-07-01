@@ -8,6 +8,7 @@ import {
   StatusBar,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from '../localization/i18n';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,6 +17,12 @@ interface WelcomeScreenProps {
 }
 
 export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
+  const { t, language, setLanguage, isZh } = useTranslation();
+  
+  const toggleLanguage = () => {
+    setLanguage(isZh ? 'en' : 'zh');
+  };
+  
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -27,24 +34,22 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
       >
         {/* Header区域 */}
         <View style={styles.header}>
+          <TouchableOpacity style={styles.languageButton} onPress={toggleLanguage}>
+            <Text style={styles.languageButtonText}>{isZh ? 'EN' : '中文'}</Text>
+          </TouchableOpacity>
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
               <Text style={styles.logoIcon}>💪</Text>
             </View>
-            <Text style={styles.appName}>BodyMind AI</Text>
-            <Text style={styles.tagline}>Science-based fat loss, personalized for you</Text>
+            <Text style={styles.appName}>{t('welcome.title')}</Text>
+            <Text style={styles.tagline}>{t('welcome.subtitle')}</Text>
           </View>
         </View>
 
         {/* 主要卡片区域 */}
         <View style={styles.mainCard}>
           <Text style={styles.heroTitle}>
-            Say goodbye to{'\n'}
-            <Text style={styles.heroHighlight}>fad diets</Text>
-          </Text>
-          
-          <Text style={styles.heroSubtitle}>
-            Get personalized nutrition and fitness plans backed by real scientific research
+            {t('welcome.description')}
           </Text>
 
           {/* 特性展示 */}
@@ -54,16 +59,16 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
                 <View style={styles.featureIconContainer}>
                   <Text style={styles.featureIcon}>🔬</Text>
                 </View>
-                <Text style={styles.featureLabel}>Evidence-based</Text>
-                <Text style={styles.featureDesc}>PubMed research</Text>
+                <Text style={styles.featureLabel}>{t('welcome.features.science')}</Text>
+                <Text style={styles.featureDesc}>{t('welcome.features.scienceDesc')}</Text>
               </View>
               
               <View style={styles.featureItem}>
                 <View style={styles.featureIconContainer}>
                   <Text style={styles.featureIcon}>🎯</Text>
                 </View>
-                <Text style={styles.featureLabel}>Personalized</Text>
-                <Text style={styles.featureDesc}>AI-powered plans</Text>
+                <Text style={styles.featureLabel}>{t('welcome.features.personalized')}</Text>
+                <Text style={styles.featureDesc}>{t('welcome.features.personalizedDesc')}</Text>
               </View>
             </View>
             
@@ -72,16 +77,16 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
                 <View style={styles.featureIconContainer}>
                   <Text style={styles.featureIcon}>📊</Text>
                 </View>
-                <Text style={styles.featureLabel}>Data-driven</Text>
-                <Text style={styles.featureDesc}>Track progress</Text>
+                <Text style={styles.featureLabel}>{t('welcome.features.ai')}</Text>
+                <Text style={styles.featureDesc}>{t('welcome.features.aiDesc')}</Text>
               </View>
               
               <View style={styles.featureItem}>
                 <View style={styles.featureIconContainer}>
                   <Text style={styles.featureIcon}>🛡️</Text>
                 </View>
-                <Text style={styles.featureLabel}>Safe & Sustainable</Text>
-                <Text style={styles.featureDesc}>No quick fixes</Text>
+                <Text style={styles.featureLabel}>{t('welcome.features.science')}</Text>
+                <Text style={styles.featureDesc}>{t('welcome.features.scienceDesc')}</Text>
               </View>
             </View>
           </View>
@@ -94,7 +99,7 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
             onPress={() => navigation.navigate('ProfileSetup')}
             activeOpacity={0.8}
           >
-            <Text style={styles.primaryButtonText}>Get Started</Text>
+            <Text style={styles.primaryButtonText}>{t('welcome.getStarted')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -102,14 +107,14 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
             onPress={() => navigation.navigate('Chat')}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>Try AI Chat</Text>
+            <Text style={styles.secondaryButtonText}>{t('chat.title')}</Text>
           </TouchableOpacity>
         </View>
 
         {/* 底部区域 */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Trusted by thousands of users worldwide
+            {t('welcome.description')}
           </Text>
         </View>
       </ScrollView>
@@ -135,6 +140,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 32,
     alignItems: 'center',
+    position: 'relative',
+  },
+  languageButton: {
+    position: 'absolute',
+    top: 60,
+    right: 24,
+    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#4285f4',
+  },
+  languageButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#4285f4',
   },
   logoSection: {
     alignItems: 'center',
