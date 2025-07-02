@@ -11,6 +11,7 @@ import ProfileSetupScreen from './screens/ProfileSetupScreen';
 import ChatScreen from './screens/ChatScreen';
 import MealPlanScreen from './screens/MealPlanScreen';
 import ResearchScreen from './screens/ResearchScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 // 导入i18n系统
 import i18n from './localization/i18n';
@@ -70,12 +71,22 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="ResearchTab"
+        name="ProgressTab"
         component={ResearchScreen}
         options={{
           tabBarLabel: 'Research',
           tabBarIcon: ({ color, size }) => (
             <Text style={{ color, fontSize: size }}>🔬</Text>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="SettingsTab"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ color, fontSize: size }}>⚙️</Text>
           ),
         }}
       />

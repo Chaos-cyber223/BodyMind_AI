@@ -153,6 +153,13 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
         styles.messageContainer,
         isUser ? styles.userMessageContainer : styles.aiMessageContainer
       ]}>
+        {!isUser && (
+          <View style={styles.aiMessageAvatar}>
+            <View style={styles.aiMessageAvatarInner}>
+              <Text style={styles.aiMessageAvatarText}>🤖</Text>
+            </View>
+          </View>
+        )}
         <View style={[
           styles.messageBubble,
           isUser ? styles.userMessageBubble : styles.aiMessageBubble
@@ -209,7 +216,10 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
         
         <View style={styles.headerContent}>
           <View style={styles.aiAvatar}>
-            <Text style={styles.aiAvatarText}>🦾</Text>
+            <View style={styles.aiAvatarInner}>
+              <Text style={styles.aiAvatarText}>🤖</Text>
+              <View style={styles.aiAvatarGlow} />
+            </View>
           </View>
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>{t('chat.title')}</Text>
@@ -361,16 +371,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   aiAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#4285f4',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#1976d2',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    shadowColor: '#1976d2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  aiAvatarInner: {
+    position: 'relative',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   aiAvatarText: {
-    fontSize: 20,
+    fontSize: 18,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  aiAvatarGlow: {
+    position: 'absolute',
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    borderRadius: 20,
+    backgroundColor: 'rgba(25, 118, 210, 0.3)',
+    zIndex: -1,
   },
   headerText: {
     flex: 1,
@@ -418,6 +454,35 @@ const styles = StyleSheet.create({
   },
   aiMessageContainer: {
     alignItems: 'flex-start',
+    flexDirection: 'row',
+  },
+  aiMessageAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#1976d2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    marginTop: 4,
+    shadowColor: '#1976d2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  aiMessageAvatarInner: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aiMessageAvatarText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
   messageBubble: {
     maxWidth: width * 0.75,
