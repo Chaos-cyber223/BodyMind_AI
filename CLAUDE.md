@@ -35,8 +35,8 @@ cp .env.example .env
 # Edit .env to add OPENAI_API_KEY if available
 
 # Start AI service
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-# API docs available at: http://localhost:8000/docs
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
+# API docs available at: http://localhost:8765/docs
 
 # From project root (future)
 npm run dev:ai
@@ -169,7 +169,7 @@ npm run clean                           # Clean all services
 
 ### Development Notes
 - **Mobile app runs on port 19006** - ✅ Complete React Native app with real backend integration
-- **AI service runs on port 8000** - ✅ Production-ready FastAPI server with LangChain RAG
+- **AI service runs on port 8765** - ✅ Production-ready FastAPI server with LangChain RAG
 - **Full-stack integration working** - Frontend ↔ Backend communication established
 - SiliconFlow API configured with DeepSeek-R1 model (requires API key)
 - Chroma vector database persists at `./chroma_db/`
@@ -205,30 +205,30 @@ GET  /docs                      # Interactive API documentation
 ### Quick Test Commands
 ```bash
 # Test health endpoint
-curl http://localhost:8000/health
+curl http://localhost:8765/health
 
 # Test LangChain RAG chat with SiliconFlow API
-curl -X POST "http://localhost:8000/api/chat/message" \
+curl -X POST "http://localhost:8765/api/chat/message" \
   -H "Content-Type: application/json" \
   -d '{"message": "How much protein should I eat for fat loss?", "user_profile": {"age": 25, "weight": 70}}'
 
 # Test TDEE calculation with personalized recommendations
-curl -X POST "http://localhost:8000/api/profile/setup" \
+curl -X POST "http://localhost:8765/api/profile/setup" \
   -H "Content-Type: application/json" \
   -d '{"age": 25, "gender": "male", "height": 175, "weight": 70, "activity_level": "moderate", "goal": "lose_weight"}'
 
 # Test AI food analysis
-curl -X POST "http://localhost:8000/api/analysis/food" \
+curl -X POST "http://localhost:8765/api/analysis/food" \
   -H "Content-Type: application/json" \
   -d '{"description": "I had scrambled eggs and toast for breakfast"}'
 
 # Test AI exercise analysis  
-curl -X POST "http://localhost:8000/api/analysis/exercise" \
+curl -X POST "http://localhost:8765/api/analysis/exercise" \
   -H "Content-Type: application/json" \
   -d '{"description": "I ran for 30 minutes in the park"}'
 
 # Upload document to knowledge base
-curl -X POST "http://localhost:8000/api/documents/upload" \
+curl -X POST "http://localhost:8765/api/documents/upload" \
   -F "file=@research_paper.pdf" \
   -F "topic=nutrition" \
   -F "source=Journal of Nutrition"

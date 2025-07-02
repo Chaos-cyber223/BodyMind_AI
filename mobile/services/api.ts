@@ -3,9 +3,9 @@ import { Platform } from 'react-native';
 
 // API Base URL configuration
 const API_BASE_URL = Platform.select({
-  ios: 'http://localhost:8000',
-  android: 'http://10.0.2.2:8000', // Android emulator
-  default: 'http://localhost:8000',
+  ios: 'http://localhost:8765',
+  android: 'http://10.0.2.2:8765', // Android emulator
+  default: 'http://localhost:8765',
 });
 
 // Create axios instance with default config

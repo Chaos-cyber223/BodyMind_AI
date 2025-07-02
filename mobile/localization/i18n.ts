@@ -63,7 +63,7 @@ class I18nManager {
   }
 
   t(key: string): string {
-    return translations[this.currentLanguage][key] || translations.en[key] || key;
+    return (translations[this.currentLanguage] as any)[key] || (translations.en as any)[key] || key;
   }
 }
 
@@ -74,8 +74,8 @@ const translations = {
   en: {
     // Welcome Screen
     'welcome.title': 'BodyMind AI',
-    'welcome.subtitle': 'Your Personal AI Fat Loss Expert',
-    'welcome.description': 'Science-based, personalized guidance for sustainable fat loss. Get started with our AI-powered approach to achieving your health goals.',
+    'welcome.subtitle': 'Smarter Fat Loss, Backed by Science.',
+    'welcome.description': 'Personalized, sustainable results—powered by AI.',
     'welcome.getStarted': 'Get Started',
     'welcome.features.science': 'Science-Based',
     'welcome.features.scienceDesc': 'Evidence-backed recommendations',
@@ -237,8 +237,8 @@ const translations = {
   zh: {
     // Welcome Screen
     'welcome.title': 'BodyMind AI',
-    'welcome.subtitle': '您的个人AI减脂专家',
-    'welcome.description': '基于科学的个性化指导，实现可持续减脂。通过我们的AI驱动方法开始您的健康目标之旅。',
+    'welcome.subtitle': '智能减脂，科学为本。',
+    'welcome.description': 'AI赋能，专属你的健康方案。',
     'welcome.getStarted': '开始使用',
     'welcome.features.science': '科学依据',
     'welcome.features.scienceDesc': '基于证据的建议',
