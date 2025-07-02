@@ -17,6 +17,7 @@ import apiService from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from '../localization/i18n';
 import LanguageToggle from '../components/LanguageToggle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -44,6 +45,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
 
   // Initialize chat on component mount
   useEffect(() => {
+    console.log('ChatScreen mounted');
     initializeChat();
     loadUserProfile();
   }, []);
@@ -68,29 +70,20 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
 
   const initializeChat = async () => {
     try {
-      // Check API health
-      const isHealthy = await apiService.healthCheck();
-      if (!isHealthy) {
-        throw new Error('API service is not available');
-      }
-
-      // Start new conversation
-      const { conversation_id, message } = await apiService.startNewConversation();
-      setConversationId(conversation_id);
-      
+      console.log('Initializing chat...');
+      // 暂时跳过API检查，直接显示欢迎消息
       setMessages([{
         id: '1',
-        text: message,
+        text: 'Welcome to BodyMind AI! How can I help you with your fat loss journey?',
         sender: 'ai',
         timestamp: new Date(),
         status: 'sent',
       }]);
     } catch (error) {
       console.error('Failed to initialize chat:', error);
-      // Fallback to offline mode
       setMessages([{
         id: '1',
-        text: t('chat.connectionErrorMessage'),
+        text: 'Welcome to BodyMind AI! How can I help you with your fat loss journey?',
         sender: 'ai',
         timestamp: new Date(),
         status: 'sent',
@@ -114,63 +107,27 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
     setIsLoading(true);
 
     try {
-      // Send message to API
-      const response = await apiService.sendMessage({
-        message: inputText.trim(),
-        user_profile: userProfile,
-        conversation_id: conversationId || undefined,
-      });
+      // 暂时模拟AI响应
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: `I received your message: "${inputText.trim()}". This is a test response.`,
+          sender: 'ai',
+          timestamp: new Date(),
+          status: 'sent',
+        };
 
-      // Update conversation ID if not set
-      if (!conversationId) {
-        setConversationId(response.conversation_id);
-      }
-
-      // Update user message status and add AI response
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response.response,
-        sender: 'ai',
-        timestamp: new Date(response.timestamp),
-        status: 'sent',
-        sources: response.sources,
-      };
-
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === userMessage.id 
-            ? { ...msg, status: 'sent' as const }
-            : msg
-        ).concat(aiMessage)
-      );
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === userMessage.id 
+              ? { ...msg, status: 'sent' as const }
+              : msg
+          ).concat(aiMessage)
+        );
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
       console.error('Failed to send message:', error);
-      
-      // Update message status to error
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === userMessage.id 
-            ? { ...msg, status: 'error' as const }
-            : msg
-        )
-      );
-
-      // Show error alert
-      Alert.alert(
-        t('chat.connectionError'),
-        t('chat.connectionErrorMessage'),
-        [
-          {
-            text: t('chat.retry'),
-            onPress: () => sendMessage(),
-          },
-          {
-            text: t('chat.ok'),
-            style: 'cancel',
-          },
-        ]
-      );
-    } finally {
       setIsLoading(false);
     }
   };
@@ -237,7 +194,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom', 'left', 'right']}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       
       {/* Header */}
@@ -273,8 +230,8 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
       >
         <ScrollView
           ref={scrollViewRef}
-          style={styles.messagesContainer}
-          contentContainerStyle={styles.messagesContent}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
         >
           {messages.map(renderMessage)}
@@ -358,7 +315,7 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -15,6 +15,7 @@ import apiService from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from '../localization/i18n';
 import LanguageToggle from '../components/LanguageToggle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -192,246 +193,127 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
     );
   };
 
+  const getExerciseIcon = (type: string) => {
+    switch (type) {
+      case 'cardio': return '🏃‍♂️';
+      case 'strength': return '💪';
+      case 'flexibility': return '🧘‍♀️';
+      default: return '⚡';
+    }
+  };
+
+  const getExerciseColor = (type: string) => {
+    switch (type) {
+      case 'cardio': return '#8B5CF6';
+      case 'strength': return '#3B82F6';
+      case 'flexibility': return '#EF4444';
+      default: return '#6B7280';
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#6366f1" />
-
-      {/* Header with Progress */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.headerTitle}>{t('mealPlan.title')}</Text>
-            <Text style={styles.headerSubtitle}>{t('mealPlan.subtitle')}</Text>
-          </View>
-          <LanguageToggle size="small" variant="outline" />
-        </View>
-
-        {/* Goal Progress */}
-        <View style={styles.goalProgress}>
-          <View style={styles.goalHeader}>
-            <Text style={styles.goalLabel}>{t('mealPlan.goalProgress')}</Text>
-            <Text style={styles.goalWeek}>{t('mealPlan.week', { current: 2, total: 12 })}</Text>
-          </View>
-          <View style={styles.progressInfo}>
-            <View style={styles.progressBarContainer}>
-              <View style={styles.progressLabels}>
-                <Text style={styles.progressText}>{t('mealPlan.current', { weight: 68.5 })}</Text>
-                <Text style={styles.progressText}>{t('mealPlan.target', { weight: 65 })}</Text>
-              </View>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '43%' }]} />
-              </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f6fa' }} edges={['bottom', 'left', 'right']}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ backgroundColor: '#fff', padding: 24, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, marginBottom: 16, elevation: 2 }}>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: '#22223b', marginBottom: 8 }}>{t('mealPlan.title')}</Text>
+          <Text style={{ fontSize: 15, color: '#4a4e69', marginBottom: 16 }}>{t('mealPlan.subtitle')}</Text>
+          <View style={{ backgroundColor: '#e0f2fe', borderRadius: 16, padding: 16, marginBottom: 8 }}>
+            <Text style={{ color: '#0369a1', fontWeight: '600', marginBottom: 4 }}>{t('mealPlan.goalProgress')}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: '#64748b' }}>{t('mealPlan.current', { weight: 68.5 })}</Text>
+              <Text style={{ color: '#64748b' }}>{t('mealPlan.target', { weight: 65 })}</Text>
             </View>
-            <View style={styles.progressStats}>
-              <Text style={styles.progressNumber}>-1.5</Text>
-              <Text style={styles.progressUnit}>{t('mealPlan.kgLost')}</Text>
+            <View style={{ height: 8, backgroundColor: '#bae6fd', borderRadius: 4, marginVertical: 8 }}>
+              <View style={{ height: 8, backgroundColor: '#0ea5e9', borderRadius: 4, width: '43%' }} />
             </View>
+            <Text style={{ color: '#059669', fontWeight: '700' }}>-1.5 {t('mealPlan.kgLost')}</Text>
           </View>
         </View>
-      </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* AI Smart Logging */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('mealPlan.aiLogging')}</Text>
-            <View style={styles.aiBadge}>
-              <Text style={styles.aiBadgeText}>{t('mealPlan.aiPowered')}</Text>
-            </View>
+        {/* AI Smart Logging Section */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 16, marginHorizontal: 16, marginBottom: 16, padding: 20, elevation: 1 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#22223b', marginBottom: 8 }}>{t('mealPlan.aiLogging')}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+            <Text style={{ fontSize: 20, marginRight: 8 }}>🧠</Text>
+            <Text style={{ color: '#059669', fontWeight: '500' }}>{t('mealPlan.aiPowered')}</Text>
           </View>
-
-          {/* Recent AI Entries */}
-          {recentEntries.length > 0 && (
-            <View style={styles.recentEntries}>
-              <Text style={styles.recentTitle}>{t('mealPlan.recentEntries')}</Text>
-              {recentEntries.map(entry => (
-                <View key={entry.id} style={styles.recentEntry}>
-                  <Text style={styles.recentEntryText}>
-                    {entry.description} - {entry.calories} cal
-                  </Text>
-                  <Text style={styles.recentEntryTime}>
-                    {entry.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* AI Input */}
-          <View style={styles.aiInputContainer}>
+          <View style={{ backgroundColor: '#f1f5f9', borderRadius: 12, padding: 12, marginBottom: 12 }}>
+            <Text style={{ color: '#334155', fontSize: 13 }}>
+              "Had scrambled eggs, toast and milk for breakfast. Did a 30-minute run in the afternoon, really sweaty!"
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
             <TextInput
-              style={styles.aiInput}
+              style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#e5e7eb', padding: 10, fontSize: 15, color: '#22223b' }}
               placeholder={t('mealPlan.aiPlaceholder')}
-              placeholderTextColor="#9ca3af"
               value={aiInput}
               onChangeText={setAiInput}
               multiline
-              maxLength={200}
+              placeholderTextColor="#9CA3AF"
             />
-            <TouchableOpacity
-              style={[styles.aiSendButton, isProcessing && styles.aiSendButtonDisabled]}
-              onPress={handleAILogging}
-              disabled={!aiInput.trim() || isProcessing}
-            >
-              {isProcessing ? (
-                <ActivityIndicator size="small" color="#ffffff" />
-              ) : (
-                <Text style={styles.aiSendIcon}>→</Text>
-              )}
+            <TouchableOpacity style={{ marginLeft: 8 }} onPress={handleAILogging} disabled={isProcessing}>
+              <Text style={{ fontSize: 22, color: isProcessing ? '#cbd5e1' : '#6366f1' }}>➤</Text>
             </TouchableOpacity>
           </View>
-
-          {/* AI Tips */}
-          <View style={styles.aiTips}>
-            <Text style={styles.aiTipsTitle}>{t('mealPlan.aiTipsTitle')}</Text>
-            <Text style={styles.aiTip}>{t('mealPlan.aiTip1')}</Text>
-            <Text style={styles.aiTip}>{t('mealPlan.aiTip2')}</Text>
-            <Text style={styles.aiTip}>{t('mealPlan.aiTip3')}</Text>
+          <View style={{ backgroundColor: '#fef9c3', borderRadius: 8, padding: 10 }}>
+            <Text style={{ color: '#b45309', fontWeight: '500', marginBottom: 4 }}>{t('mealPlan.aiTipsTitle')}</Text>
+            <Text style={{ color: '#b45309', fontSize: 12 }}>• {t('mealPlan.aiTip1')}</Text>
+            <Text style={{ color: '#b45309', fontSize: 12 }}>• {t('mealPlan.aiTip2')}</Text>
+            <Text style={{ color: '#b45309', fontSize: 12 }}>• {t('mealPlan.aiTip3')}</Text>
           </View>
         </View>
 
-        {/* Today's Nutrition */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('mealPlan.nutrition')}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-              <Text style={styles.linkText}>{t('mealPlan.chatToUpdate')}</Text>
-            </TouchableOpacity>
+        {/* Nutrition Progress */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 16, marginHorizontal: 16, marginBottom: 16, padding: 20, elevation: 1 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#22223b', marginBottom: 8 }}>{t('mealPlan.nutrition')}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <Text style={{ color: '#64748b' }}>{t('mealPlan.calories')}</Text>
+            <Text style={{ color: '#0ea5e9', fontWeight: '700' }}>{t('mealPlan.caloriesFormat', { current: nutritionData.calories, target: nutritionData.targetCalories })}</Text>
           </View>
-
-          {/* Calorie Progress */}
-          <View style={styles.calorieProgress}>
-            <View style={styles.calorieHeader}>
-              <Text style={styles.calorieLabel}>{t('mealPlan.calories')}</Text>
-              <Text style={styles.calorieNumbers}>
-                {t('mealPlan.caloriesFormat', { current: nutritionData.calories, target: nutritionData.targetCalories })}
-              </Text>
-            </View>
-            <View style={styles.calorieBar}>
-              <View 
-                style={[
-                  styles.calorieFill, 
-                  { width: `${calculatePercentage(nutritionData.calories, nutritionData.targetCalories)}%` }
-                ]} 
-              />
-            </View>
+          <View style={{ height: 8, backgroundColor: '#e0e7ef', borderRadius: 4, marginBottom: 12 }}>
+            <View style={{ height: 8, backgroundColor: '#6366f1', borderRadius: 4, width: `${Math.min((nutritionData.calories / nutritionData.targetCalories) * 100, 100)}%` }} />
           </View>
-
-          {/* Macronutrients */}
-          <View style={styles.macros}>
-            {/* Protein */}
-            <View style={styles.macroItem}>
-              <View style={styles.macroCircle}>
-                <View style={styles.macroProgress}>
-                  <Text style={styles.macroPercentage}>
-                    {Math.round(calculatePercentage(nutritionData.protein.current, nutritionData.protein.target))}%
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.macroName}>{t('mealPlan.protein')}</Text>
-              <Text style={styles.macroAmount}>
-                {nutritionData.protein.current}/{nutritionData.protein.target}g
-              </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={{ color: '#059669', fontWeight: '600' }}>{t('mealPlan.protein')}</Text>
+              <Text style={{ color: '#22223b', fontWeight: '700' }}>{nutritionData.protein.current}/{nutritionData.protein.target}g</Text>
             </View>
-
-            {/* Carbs */}
-            <View style={styles.macroItem}>
-              <View style={styles.macroCircle}>
-                <View style={styles.macroProgress}>
-                  <Text style={styles.macroPercentage}>
-                    {Math.round(calculatePercentage(nutritionData.carbs.current, nutritionData.carbs.target))}%
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.macroName}>{t('mealPlan.carbs')}</Text>
-              <Text style={styles.macroAmount}>
-                {nutritionData.carbs.current}/{nutritionData.carbs.target}g
-              </Text>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={{ color: '#f59e0b', fontWeight: '600' }}>{t('mealPlan.carbs')}</Text>
+              <Text style={{ color: '#22223b', fontWeight: '700' }}>{nutritionData.carbs.current}/{nutritionData.carbs.target}g</Text>
             </View>
-
-            {/* Fats */}
-            <View style={styles.macroItem}>
-              <View style={styles.macroCircle}>
-                <View style={styles.macroProgress}>
-                  <Text style={styles.macroPercentage}>
-                    {Math.round(calculatePercentage(nutritionData.fats.current, nutritionData.fats.target))}%
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.macroName}>{t('mealPlan.fats')}</Text>
-              <Text style={styles.macroAmount}>
-                {nutritionData.fats.current}/{nutritionData.fats.target}g
-              </Text>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={{ color: '#ef4444', fontWeight: '600' }}>{t('mealPlan.fats')}</Text>
+              <Text style={{ color: '#22223b', fontWeight: '700' }}>{nutritionData.fats.current}/{nutritionData.fats.target}g</Text>
             </View>
           </View>
         </View>
 
-        {/* Today's Workout */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('mealPlan.workout')}</Text>
-            <View style={styles.workoutBadges}>
-              <View style={styles.workoutBadge}>
-                <Text style={styles.workoutBadgeText}>{t('mealPlan.aiGenerated')}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Exercise List */}
-          <View style={styles.exerciseList}>
-            {exercises.map(exercise => (
-              <TouchableOpacity
-                key={exercise.id}
-                style={styles.exerciseItem}
-                onPress={() => toggleExercise(exercise.id)}
-              >
-                <View style={[
-                  styles.exerciseIcon,
-                  exercise.type === 'cardio' && styles.cardioIcon,
-                  exercise.type === 'strength' && styles.strengthIcon,
-                ]}>
-                  <Text style={styles.exerciseEmoji}>
-                    {exercise.type === 'cardio' ? '🏃' : '💪'}
-                  </Text>
-                </View>
-                <View style={styles.exerciseContent}>
-                  <Text style={styles.exerciseName}>{exercise.name}</Text>
-                  <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
-                </View>
-                <View style={styles.exerciseCheck}>
-                  {exercise.completed ? (
-                    <Text style={styles.checkIcon}>✓</Text>
-                  ) : (
-                    <View style={styles.checkEmpty} />
-                  )}
-                </View>
+        {/* Today's Workout Section */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 16, marginHorizontal: 16, marginBottom: 16, padding: 20, elevation: 1 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#22223b', marginBottom: 8 }}>{t('mealPlan.workout')}</Text>
+          {exercises.map((exercise) => (
+            <View key={exercise.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <Text style={{ fontSize: 20, marginRight: 8 }}>{getExerciseIcon(exercise.type)}</Text>
+              <Text style={{ color: '#22223b', fontWeight: '500', flex: 1 }}>{exercise.name} <Text style={{ color: '#64748b', fontWeight: '400' }}>{exercise.duration}</Text></Text>
+              <TouchableOpacity onPress={() => toggleExercise(exercise.id)}>
+                <Text style={{ fontSize: 18, color: exercise.completed ? '#059669' : '#d1d5db' }}>{exercise.completed ? '✓' : '○'}</Text>
               </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* AI Suggestion */}
-          <View style={styles.aiSuggestion}>
-            <Text style={styles.suggestionIcon}>✨</Text>
-            <Text style={styles.suggestionText}>
-              {t('mealPlan.aiSuggestion')}
-            </Text>
-          </View>
-        </View>
-
-        {/* Science Tip */}
-        <View style={[styles.section, styles.lastSection]}>
-          <View style={styles.scienceTip}>
-            <Text style={styles.scienceIcon}>🔬</Text>
-            <View style={styles.scienceContent}>
-              <Text style={styles.scienceTitle}>{t('mealPlan.latestResearch')}</Text>
-              <Text style={styles.scienceText}>
-                {t('mealPlan.researchText')}
-              </Text>
             </View>
+          ))}
+          <View style={{ backgroundColor: '#e0f2fe', borderRadius: 8, padding: 10, marginTop: 8 }}>
+            <Text style={{ color: '#0369a1', fontWeight: '500' }}>{t('mealPlan.aiSuggestion')}</Text>
+          </View>
+          <View style={{ backgroundColor: '#f1f5f9', borderRadius: 8, padding: 10, marginTop: 8 }}>
+            <Text style={{ color: '#6366f1', fontWeight: '500' }}>💡 Science Tip: Strength training boosts metabolism for up to 24 hours post-workout</Text>
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -441,16 +323,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   headerContainer: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#6366F1',
     paddingTop: 50,
     paddingBottom: 24,
     paddingHorizontal: 20,
   },
-  headerTop: {
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  headerLeft: {
+    flexDirection: 'column',
   },
   headerTitle: {
     fontSize: 24,
@@ -462,7 +346,7 @@ const styles = StyleSheet.create({
     color: '#e0e7ff',
     marginTop: 4,
   },
-  profileButton: {
+  profileAvatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -470,31 +354,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  profileInitial: {
+  avatarText: {
     fontSize: 18,
     fontWeight: '600',
     color: '#ffffff',
   },
-  goalProgress: {
+  progressCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 16,
     padding: 16,
   },
-  goalHeader: {
+  progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
   },
-  goalLabel: {
+  progressLabel: {
     fontSize: 14,
     color: '#e0e7ff',
   },
-  goalWeek: {
+  progressWeek: {
     fontSize: 14,
     fontWeight: '600',
     color: '#ffffff',
   },
-  progressInfo: {
+  progressContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -536,15 +420,15 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  content: {
+    flex: 1,
+  },
   section: {
     backgroundColor: '#ffffff',
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 16,
     padding: 20,
-  },
-  lastSection: {
-    marginBottom: 100,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -568,31 +452,73 @@ const styles = StyleSheet.create({
     color: '#1e40af',
     fontWeight: '500',
   },
-  recentEntries: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+  aiInputContainer: {
+    flexDirection: 'column',
+    flex: 1,
   },
-  recentTitle: {
-    fontSize: 12,
-    color: '#6b7280',
-    marginBottom: 8,
+  aiInputBox: {
+    flexDirection: 'column',
+    flex: 1,
   },
-  recentEntry: {
+  aiInputRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
+    alignItems: 'center',
   },
-  recentEntryText: {
+  aiAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  aiAvatarText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  aiMessage: {
+    flex: 1,
+  },
+  aiMessageText: {
     fontSize: 13,
     color: '#374151',
   },
-  recentEntryTime: {
-    fontSize: 12,
-    color: '#9ca3af',
+  aiResponseBox: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
   },
-  aiInputContainer: {
+  aiResponseAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  aiResponseAvatarText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  aiResponseMessage: {
+    flex: 1,
+  },
+  aiResponseTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  aiResponseText: {
+    fontSize: 13,
+    color: '#374151',
+  },
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: '#f3f4f6',
@@ -600,13 +526,31 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
   },
-  aiInput: {
+  inputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  textInput: {
     flex: 1,
     fontSize: 15,
     color: '#111827',
     maxHeight: 80,
   },
-  aiSendButton: {
+  voiceButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  voiceIcon: {
+    fontSize: 20,
+    color: '#6b7280',
+  },
+  sendButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -615,38 +559,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 8,
   },
-  aiSendButtonDisabled: {
+  sendButtonDisabled: {
     backgroundColor: '#d1d5db',
   },
-  aiSendIcon: {
+  sendIcon: {
     fontSize: 20,
     color: '#ffffff',
     fontWeight: '600',
   },
-  aiTips: {
+  tipsContainer: {
     backgroundColor: '#fef3c7',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
     borderColor: '#fcd34d',
   },
-  aiTipsTitle: {
+  tipsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  tipsIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  tipsTitle: {
     fontSize: 13,
     fontWeight: '600',
     color: '#92400e',
-    marginBottom: 8,
   },
-  aiTip: {
+  tipsContent: {
+    flexDirection: 'column',
+  },
+  tipText: {
     fontSize: 12,
     color: '#92400e',
     marginBottom: 4,
   },
-  linkText: {
-    fontSize: 14,
-    color: '#6366f1',
-    fontWeight: '500',
-  },
-  calorieProgress: {
+  calorieContainer: {
     marginBottom: 20,
   },
   calorieHeader: {
@@ -658,7 +608,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#6b7280',
   },
-  calorieNumbers: {
+  calorieValue: {
     fontSize: 15,
     fontWeight: '600',
     color: '#111827',
@@ -673,7 +623,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     borderRadius: 6,
   },
-  macros: {
+  macrosContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
@@ -698,29 +648,64 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111827',
   },
-  macroName: {
+  macroLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: '#111827',
     marginBottom: 4,
   },
-  macroAmount: {
+  macroValue: {
     fontSize: 12,
     color: '#6b7280',
   },
   workoutBadges: {
     flexDirection: 'row',
   },
-  workoutBadge: {
+  aiGeneratedBadge: {
     backgroundColor: '#dbeafe',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
-  workoutBadgeText: {
+  aiGeneratedBadgeText: {
     fontSize: 12,
     color: '#1e40af',
     fontWeight: '500',
+  },
+  strengthBadge: {
+    backgroundColor: '#dbeafe',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  strengthBadgeText: {
+    fontSize: 12,
+    color: '#1e40af',
+    fontWeight: '500',
+  },
+  aiCompletedBox: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  aiCompletedHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  aiCompletedIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  aiCompletedTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  aiCompletedText: {
+    fontSize: 13,
+    color: '#374151',
   },
   exerciseList: {
     marginBottom: 16,
@@ -733,6 +718,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 8,
   },
+  exerciseLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   exerciseIcon: {
     width: 36,
     height: 36,
@@ -741,16 +730,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
   },
-  cardioIcon: {
-    backgroundColor: '#ddd6fe',
-  },
-  strengthIcon: {
-    backgroundColor: '#fed7aa',
-  },
-  exerciseEmoji: {
+  exerciseIconText: {
     fontSize: 18,
   },
-  exerciseContent: {
+  exerciseInfo: {
     flex: 1,
   },
   exerciseName: {
@@ -759,33 +742,34 @@ const styles = StyleSheet.create({
     color: '#111827',
     marginBottom: 2,
   },
-  exerciseDuration: {
+  exerciseDetails: {
     fontSize: 13,
     color: '#6b7280',
   },
-  exerciseCheck: {
+  exerciseToggle: {
     width: 24,
     height: 24,
   },
-  checkIcon: {
+  exerciseToggleIcon: {
     fontSize: 18,
+    color: '#6b7280',
+  },
+  exerciseToggleCompleted: {
     color: '#10b981',
   },
-  checkEmpty: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#d1d5db',
+  exerciseToggleIncomplete: {
+    color: '#d1d5db',
   },
-  aiSuggestion: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  suggestionBox: {
     backgroundColor: '#f3e8ff',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
     borderColor: '#e9d5ff',
+  },
+  suggestionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   suggestionIcon: {
     fontSize: 16,
@@ -796,31 +780,78 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b21a8',
   },
-  scienceTip: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  suggestionBold: {
+    fontWeight: '600',
+  },
+  scienceTipBox: {
     backgroundColor: '#eff6ff',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
     borderColor: '#dbeafe',
   },
-  scienceIcon: {
+  scienceTipContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  scienceTipIcon: {
     fontSize: 20,
     marginRight: 12,
   },
-  scienceContent: {
+  scienceTipText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#3730a3',
+    lineHeight: 18,
+  },
+  scienceTipBold: {
+    fontWeight: '600',
+  },
+  researchBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+  },
+  researchContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  researchIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  researchInfo: {
     flex: 1,
   },
-  scienceTitle: {
+  researchTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#1e40af',
     marginBottom: 4,
   },
-  scienceText: {
+  researchText: {
     fontSize: 13,
     color: '#3730a3',
     lineHeight: 18,
+  },
+  researchLink: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#6366f1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  researchLinkIcon: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+  languageToggleContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
   },
 });

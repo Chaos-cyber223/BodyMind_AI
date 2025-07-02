@@ -104,10 +104,10 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
           
           <TouchableOpacity 
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate('Chat')}
+            onPress={() => navigation.navigate('MainApp')}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>{t('chat.title')}</Text>
+            <Text style={styles.secondaryButtonText}>Try AI Chat</Text>
           </TouchableOpacity>
         </View>
 

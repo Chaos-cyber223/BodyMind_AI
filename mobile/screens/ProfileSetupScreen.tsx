@@ -373,7 +373,7 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
         [
           {
             text: t('profile.continue'),
-            onPress: () => navigation.navigate('Chat')
+            onPress: () => navigation.navigate('MainApp')
           }
         ]
       );
