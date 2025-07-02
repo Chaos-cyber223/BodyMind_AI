@@ -33,8 +33,8 @@ const RESEARCH_LIST = [
 export default function ResearchScreen() {
   const { t } = useTranslation();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f6fa' }} edges={['bottom', 'left', 'right']}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 120 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f6fa' }} edges={['top', 'left', 'right']}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 80 }}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('mealPlan.latestResearch')}</Text>
           <Text style={styles.subtitle}>Science-backed insights for smarter fat loss</Text>

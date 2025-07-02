@@ -151,6 +151,8 @@ BodyMind_AI/
 - Real-time AI chat with scientific source citations
 - Profile setup with TDEE calculations
 - Food and exercise logging with AI parsing
+- Progress tracking with weight trends and nutrition visualization
+- Complete tab navigation (Chat, Plan, Progress, Settings)
 
 ## 🚀 Quick Start
 

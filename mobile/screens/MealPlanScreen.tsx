@@ -212,10 +212,10 @@ export default function MealPlanScreen({ navigation }: MealPlanScreenProps) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f6fa' }} edges={['bottom', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f6fa' }} edges={['top', 'left', 'right']}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
         showsVerticalScrollIndicator={false}
       >
         <View style={{ backgroundColor: '#fff', padding: 24, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, marginBottom: 16, elevation: 2 }}>
