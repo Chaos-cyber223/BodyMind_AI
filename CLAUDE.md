@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BodyMind_AI is a full-stack AI-powered fat loss expert application combining React Native mobile frontend, Python AI services, and Java Spring Boot backend services in a microservices architecture. The project aims to provide science-based, personalized fat loss guidance through AI-powered RAG (Retrieval-Augmented Generation) system.
+BodyMind_AI is a full-stack AI-powered fat loss expert application with React Native mobile frontend and Python AI backend. The project provides science-based, personalized fat loss guidance through AI-powered RAG (Retrieval-Augmented Generation) system.
 
 ## Development Commands
 
@@ -22,7 +22,7 @@ npm run dev:mobile                      # From project root
 
 ### Backend Services
 
-#### AI Service (Python FastAPI) - ✅ READY
+#### AI Service (Python FastAPI)
 ```bash
 # Setup AI service environment
 cd backend/ai-service
@@ -32,23 +32,14 @@ pip install -r requirements-minimal.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env to add OPENAI_API_KEY if available
+# Edit .env to add SILICONFLOW_API_KEY
 
 # Start AI service
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
 # API docs available at: http://localhost:8765/docs
 
-# From project root (future)
+# From project root
 npm run dev:ai
-```
-
-#### API Service (Java Spring Boot) - ⏳ PLANNED
-```bash
-cd backend/api-service && ./mvnw spring-boot:run
-npm run dev:api                         # From project root
-
-# Start all services simultaneously (when Java service is ready)
-npm run dev                             # Runs mobile, AI service, and API service concurrently
 ```
 
 ### Docker Development
@@ -65,7 +56,6 @@ npm run docker:down                     # Shorthand for docker-compose down
 npm run build                           # Build all services
 npm run build:mobile                    # Expo web build
 npm run build:ai                        # Docker image for AI service
-npm run build:api                       # Maven package for API service
 ```
 
 ### Testing and Quality
@@ -73,7 +63,6 @@ npm run build:api                       # Maven package for API service
 npm run test                            # Run all tests
 npm run test:mobile                     # React Native tests
 npm run test:ai                         # Python pytest
-npm run test:api                        # Java Maven tests
 
 npm run lint                            # Lint all services
 npm run lint:mobile                     # Expo lint
@@ -87,17 +76,14 @@ npm run clean                           # Clean all services
 
 ### Tech Stack
 - **Mobile**: React Native + TypeScript + Expo + React Navigation
-- **AI Backend**: Python 3.10 + FastAPI + OpenAI API + Custom RAG system
-- **Business Backend**: Java 17 + Spring Boot 3 + gRPC (planned)
-- **Databases**: In-memory knowledge base (current), PostgreSQL + ChromaDB/FAISS (planned)
-- **DevOps**: Docker + docker-compose + GitHub Actions
-- **External APIs**: OpenAI API for AI responses
+- **Backend**: Python 3.10 + FastAPI + LangChain RAG system
+- **Database**: Chroma vector database for embeddings storage
+- **DevOps**: Docker + docker-compose
+- **External APIs**: SiliconFlow API (DeepSeek-R1 + BGE-M3 embeddings)
 
 ### Service Architecture
-1. **Mobile App** (`mobile/`): React Native app with screens for Welcome, Profile Setup, and AI Chat
+1. **Mobile App** (`mobile/`): React Native app with Welcome, Profile Setup, Chat, and Meal Plan screens
 2. **AI Service** (`backend/ai-service/`): Python FastAPI service handling AI chat, RAG queries, and personalized recommendations
-3. **API Service** (`backend/api-service/`): Java Spring Boot service managing user data, profiles, and business logic
-4. **Shared Types** (`shared/`): Common TypeScript/Python types and utilities
 
 ### Key Components
 - **Navigation**: React Navigation v7 with stack navigator for screen transitions
@@ -106,81 +92,62 @@ npm run clean                           # Clean all services
 - **RAG System**: Retrieval-Augmented Generation using scientific papers for evidence-based recommendations
 
 ### Database Schema
-- **PostgreSQL**: User accounts, profiles, chat history, and meal/workout plans
-- **Vector Database**: Embedded scientific research papers for RAG system
-- **Redis**: Session management and caching layer
+- **Chroma Vector Database**: Embedded scientific research papers for RAG system
+- **AsyncStorage**: Local storage for user profiles and language preferences
 
 ### Development Environment
-- **Monorepo**: Workspaces configured for mobile, ai-service, api-service, and shared modules
+- **Monorepo**: Workspaces configured for mobile and ai-service
 - **Hot Reload**: All services support hot reloading during development
-- **Docker**: Full containerized development environment with service orchestration
-- **Pre-commit**: Husky + lint-staged for code quality enforcement
+- **Docker**: Containerized development environment
+- **Linting**: ESLint + Pylint for code quality
 
 ### Current Implementation Status
-- ✅ **React Native Mobile App - PRODUCTION READY**
-  - ✅ Google Material Design welcome screen with smooth animations
-  - ✅ Multi-step profile setup with comprehensive body metrics collection
-  - ✅ **Real-time chat screen with LangChain RAG integration**
-  - ✅ **AI-powered meal plan screen with smart logging**
-  - ✅ **Complete bilingual support (English/Chinese) with professional i18n system**
-  - ✅ **Real-time language switching without app restart**
-  - ✅ Complete API service integration with error handling
-  - ✅ AsyncStorage for profile and language preference persistence
-  - ✅ Professional UI/UX following Material Design principles
-  - ✅ Reusable LanguageToggle component with multiple variants
 
-- ✅ **AI Service Backend - PRODUCTION READY**
-  - ✅ FastAPI with full REST API endpoint structure
-  - ✅ **LangChain RAG System** - Professional vector search implementation
-  - ✅ Chroma vector database with persistent storage
-  - ✅ SiliconFlow API integration (DeepSeek-R1 + BGE-M3 embeddings)
-  - ✅ Document upload pipeline for knowledge base expansion
-  - ✅ Conversational memory with context retention
-  - ✅ TDEE calculation service with Mifflin-St Jeor equation
-  - ✅ Food and exercise parsing from natural language
-  - ✅ Scientific source citation in AI responses
-  - ✅ Comprehensive API documentation (Swagger/OpenAPI)
+**Completed Features:**
+- React Native Mobile App with Google Material Design
+- Multi-step profile setup with body metrics collection
+- Real-time chat screen with LangChain RAG integration
+- AI-powered meal plan screen with smart logging
+- Complete bilingual support (English/Chinese) with i18n system
+- Real-time language switching without app restart
+- Backend API integration with error handling
+- AsyncStorage for profile and language preference persistence
+- Reusable LanguageToggle component
 
-- ✅ **Frontend-Backend Integration - LIVE**
-  - ✅ Real-time chat with AI responses from LangChain RAG
-  - ✅ API health checks and error handling
-  - ✅ Profile data synchronization between frontend and backend
-  - ✅ AI-powered food/exercise logging with real parsing
-  - ✅ Source citations displayed in chat responses
+- Python FastAPI Backend
+- LangChain RAG System with Chroma vector database
+- SiliconFlow API integration (DeepSeek-R1 + BGE-M3 embeddings)
+- Document upload pipeline for knowledge base expansion
+- Conversational memory with context retention
+- TDEE calculation service with Mifflin-St Jeor equation
+- Food and exercise parsing from natural language
+- Scientific source citation in AI responses
+- Comprehensive API documentation (Swagger/OpenAPI)
 
-- ⏳ **Remaining Tasks**
-  - ⏳ SettingsScreen implementation
-  - ⏳ ProgressScreen with data visualization
-  - ⏳ Tab navigation implementation
-  - ⏳ Additional screens (if needed)
+- Frontend-Backend Integration
+- Real-time chat with AI responses from LangChain RAG
+- API health checks and error handling
+- Profile data synchronization between frontend and backend
+- AI-powered food/exercise logging with real parsing
+- Source citations displayed in chat responses
 
-- ✅ **Internationalization (i18n) - COMPLETE**
-  - ✅ Comprehensive bilingual system supporting English and Chinese
-  - ✅ 99+ translation key-value pairs covering all UI elements
-  - ✅ Automatic device language detection with manual override
-  - ✅ AsyncStorage-based language preference persistence
-  - ✅ useTranslation React hook with parameter interpolation
-  - ✅ Real-time language switching across all screens
-  - ✅ Professional LanguageToggle component with multiple variants
-  - ✅ Type-safe implementation with zero external dependencies
-  - ✅ All screens fully localized: Welcome, Profile Setup, Chat, Meal Plan
-
-- ❌ Java backend services (removed - Python handles everything efficiently)
+**TODO:**
+- SettingsScreen implementation
+- ProgressScreen with data visualization
+- Tab navigation implementation
 
 ### Development Notes
-- **Mobile app runs on port 19006** - ✅ Complete React Native app with real backend integration
-- **AI service runs on port 8765** - ✅ Production-ready FastAPI server with LangChain RAG
-- **Full-stack integration working** - Frontend ↔ Backend communication established
+- **Mobile app runs on port 19006** - React Native app with backend integration
+- **AI service runs on port 8765** - FastAPI server with LangChain RAG
 - SiliconFlow API configured with DeepSeek-R1 model (requires API key)
 - Chroma vector database persists at `./chroma_db/`
-- TypeScript strict mode enabled with comprehensive linting
+- TypeScript strict mode enabled with linting
 - Expo Go compatible for mobile testing
 - AsyncStorage handles user profile and language preference persistence
-- Error handling and offline mode support implemented
-- **Bilingual support (English/Chinese)** with instant language switching
+- Bilingual support (English/Chinese) with instant language switching
 - Professional i18n system with 99+ translations covering all UI elements
 
-### AI Service Features (Ready to Use)
+### AI Service Features
 ```bash
 # Available API endpoints:
 POST /api/chat/message          # AI chat with LangChain RAG-enhanced responses

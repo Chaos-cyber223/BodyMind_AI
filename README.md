@@ -35,99 +35,77 @@ graph TD
         A[React Native + TypeScript Mobile App]
     end
     
-    subgraph "API Gateway"
-        B[Spring Boot API Gateway]
-    end
-    
-    subgraph "Business Logic Layer"
-        C[User Service<br/>Java + Spring Boot]
-        D[Profile Service<br/>Java + Spring Boot]
-        E[Plan Service<br/>Java + Spring Boot]
-    end
-    
-    subgraph "AI Core Services"
-        F[RAG Service<br/>Python + LangChain]
-        G[Knowledge Update Service<br/>Python + Scrapy]
+    subgraph "Backend Services"
+        B[Python FastAPI + LangChain RAG]
     end
     
     subgraph "Data Layer"
-        H[PostgreSQL<br/>User Data & Profiles]
-        I[ChromaDB/FAISS<br/>Vector Database]
-        J[AWS S3<br/>Static Assets]
+        C[Chroma Vector Database]
+        D[AsyncStorage Local Storage]
     end
     
     subgraph "External APIs"
-        K[PubMed API]
-        L[Nutrition APIs]
+        E[SiliconFlow API<br/>DeepSeek-R1 + BGE-M3]
     end
     
     A --> B
     B --> C
-    B --> D
     B --> E
-    C --> H
-    D --> H
-    E --> F
-    F --> I
-    G --> I
-    G --> K
-    G --> L
-    F --> J
+    A --> D
     
     style A fill:#61dafb,stroke:#333,stroke-width:2px
-    style B fill:#6db33f,stroke:#333,stroke-width:2px
-    style C fill:#6db33f,stroke:#333,stroke-width:2px
-    style D fill:#6db33f,stroke:#333,stroke-width:2px
-    style E fill:#6db33f,stroke:#333,stroke-width:2px
-    style F fill:#3776ab,stroke:#333,stroke-width:2px
-    style G fill:#3776ab,stroke:#333,stroke-width:2px
-    style H fill:#336791,stroke:#333,stroke-width:2px
-    style I fill:#ff6b6b,stroke:#333,stroke-width:2px
-    style J fill:#ff9500,stroke:#333,stroke-width:2px
+    style B fill:#3776ab,stroke:#333,stroke-width:2px
+    style C fill:#ff6b6b,stroke:#333,stroke-width:2px
+    style D fill:#4CAF50,stroke:#333,stroke-width:2px
+    style E fill:#ff9500,stroke:#333,stroke-width:2px
 ```
 
 ## 🛠️ Technology Stack
 
-* **Mobile App**: `React Native`, `TypeScript`, `Expo`, `Axios`, `NativeBase`
-* **Backend Business Layer**: `Java 17`, `Spring Boot 3`, `gRPC-Java`
-* **AI Core Services**: `Python 3.10`, `LangChain`, `FastAPI`, `gRPC-Python`, `Scrapy`
-* **Databases**: `ChromaDB`/`FAISS` (Vector DB), `PostgreSQL`/`MySQL` (Relational DB)
-* **DevOps & Deployment**: `Docker`, `GitHub Actions`, `AWS (EC2/ECS, S3, RDS, ECR)`
+* **Mobile App**: `React Native`, `TypeScript`, `Expo`, `React Navigation`
+* **Backend**: `Python 3.10`, `FastAPI`, `LangChain`, `Uvicorn`
+* **Database**: `Chroma` (Vector DB), `AsyncStorage` (Local Storage)
+* **AI Services**: `SiliconFlow API`, `DeepSeek-R1`, `BGE-M3 Embeddings`
+* **DevOps**: `Docker`, `docker-compose`
 
 ## 🔥 Technical Skills & Learning
 
-* **Modern Architecture**: Building scalable microservices with Java Spring Boot and exploring gRPC for efficient service communication
-* **AI/ML Integration**: Implementing RAG systems with LangChain, working with vector databases and automated data pipelines
-* **Cloud & DevOps**: Hands-on experience with AWS services, Docker containerization, and CI/CD automation
-* **Full-Stack Development**: React TypeScript frontend + Java backend + Python AI services integration
-* **Best Practices**: Focused on clean code, proper error handling, comprehensive testing, and maintainable architecture
+* **AI/ML Integration**: Implementing RAG systems with LangChain, working with vector databases and embedding models
+* **Full-Stack Development**: React Native TypeScript frontend + Python FastAPI backend integration
+* **Modern Architecture**: Building scalable applications with FastAPI and containerized deployment
+* **Mobile Development**: React Native with Expo, TypeScript, and professional UI/UX design
+* **Best Practices**: Clean code, proper error handling, bilingual i18n support, and maintainable architecture
 
 ## 🌍 Remote-Ready Development
 
 * **Containerized Setup**: Docker configuration for easy local development and team onboarding
 * **Clear Documentation**: Well-documented code, architecture diagrams, and comprehensive README
-* **CI/CD Implementation**: GitHub Actions for automated testing and deployment workflows
-* **Clean API Design**: RESTful services with clear contracts for team collaboration
+* **Clean API Design**: RESTful FastAPI services with OpenAPI documentation
 * **Team-Friendly**: Structured for code reviews, pair programming, and distributed team workflows
+* **Bilingual Support**: Professional i18n system supporting English and Chinese
 
 ## 🚀 MVP Roadmap
 
-- **v0.1: Core Fat Loss Logic Validation** - `In Progress`
-  - [ ] Implement core RAG pipeline with knowledge base using manually downloaded **5-10 classic papers on caloric deficit and macronutrient allocation**.
-  - [ ] Build basic web interface for inputting body data and displaying AI results.
-  - [ ] Complete gRPC calls from Java backend to Python AI services, establishing end-to-end pipeline.
+- **v0.1: Core Fat Loss Logic Validation** - `Completed`
+  - [x] Implement core RAG pipeline with LangChain and Chroma vector database
+  - [x] Build React Native mobile interface for profile setup and AI chat
+  - [x] Complete FastAPI backend with TDEE calculation and food/exercise parsing
 
-- **v0.2: Containerization & Continuous Integration**
-  - [ ] Write Dockerfile and implement one-click local deployment using `docker-compose`.
-  - [ ] Configure GitHub Actions for CI/CD, automatically pushing images to AWS ECR.
+- **v0.2: UI/UX Completion** - `In Progress`
+  - [x] Complete bilingual support (English/Chinese) with i18n system
+  - [ ] Implement SettingsScreen for user preferences
+  - [ ] Build ProgressScreen with data visualization
+  - [ ] Add tab navigation for better user experience
 
-- **v0.3: Automated Knowledge Pipeline**
-  - [ ] Develop Scrapy crawler to specifically scrape paper abstracts from PubMed using keywords like "fat loss", "metabolism".
-  - [ ] Establish automated data processing pipeline to update vector database.
+- **v0.3: Enhanced Features**
+  - [ ] Improve document upload pipeline for knowledge base expansion
+  - [ ] Add user authentication and profile persistence
+  - [ ] Implement offline mode support
 
-- **v0.4: User System & Cloud Deployment**
-  - [ ] Implement user registration/login and save personal fat loss profiles.
-  - [ ] Deploy MVP version to AWS cloud environment.
+- **v0.4: Production Deployment**
+  - [ ] Optimize performance and add comprehensive error handling
+  - [ ] Deploy to production environment
+  - [ ] Add monitoring and analytics
 
 ## 👤 About the Author
 
@@ -158,9 +136,8 @@ BodyMind_AI/
 │   ├── screens/            # Welcome, Profile, Chat, Plan screens
 │   ├── components/         # Reusable UI components
 │   └── App.tsx            # Navigation & app entry point
-├── 🖥️ backend/             # Microservices architecture
-│   ├── ai-service/         # Python FastAPI + AI/ML logic
-│   └── api-service/        # Java Spring Boot + business logic
+├── 🖥️ backend/             # Backend services
+│   └── ai-service/         # Python FastAPI + LangChain RAG
 ├── 🔗 shared/              # Shared types and utilities
 ├── 🏗️ infrastructure/       # Docker, deployment, and DevOps
 ├── 📚 docs/                # Development guides and documentation
@@ -168,17 +145,20 @@ BodyMind_AI/
 └── 🐳 docker-compose.yml   # Multi-service orchestration
 ```
 
-**Current Status**: ✅ **Google-style Welcome Screen completed!**
-- Beautiful gradient background with Material Design principles
-- Interactive navigation between screens
-- Professional mobile-first responsive design
+**Current Status**: ✅ **Core Features Completed!**
+- React Native app with Material Design and bilingual support
+- Python FastAPI backend with LangChain RAG system
+- Real-time AI chat with scientific source citations
+- Profile setup with TDEE calculations
+- Food and exercise logging with AI parsing
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
+- Python 3.10+
 - Expo CLI
-- Docker (optional, for full-stack development)
+- Docker (optional)
 
 ### Development Mode
 
@@ -189,16 +169,21 @@ npm install
 npm run web          # Browser: http://localhost:19006
 ```
 
-**Option 2: Full Stack (Future)**
+**Option 2: Full Stack Development**
 ```bash
-npm install          # Install root dependencies
-npm run dev          # Start all services with Docker
+# Terminal 1: Start AI service
+cd backend/ai-service
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
+
+# Terminal 2: Start mobile app  
+cd mobile
+npm run web          # Browser: http://localhost:19006
 ```
 
 ### View the App
 1. Open browser: `http://localhost:19006`
 2. Press **F12** → Toggle device toolbar → Select **iPhone 14 Pro**
-3. Experience the Google-style UI design!
+3. Experience the bilingual AI-powered fat loss expert!
 
 ## 📄 License
 
