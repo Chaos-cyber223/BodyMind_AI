@@ -96,7 +96,7 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
         <View style={styles.actionsContainer}>
           <TouchableOpacity 
             style={styles.primaryButton}
-            onPress={() => navigation.navigate('ProfileSetup')}
+            onPress={() => navigation.navigate('Register')}
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>{t('welcome.getStarted')}</Text>
@@ -104,10 +104,10 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
           
           <TouchableOpacity 
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate('MainApp')}
+            onPress={() => navigation.navigate('Login')}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>Try AI Chat</Text>
+            <Text style={styles.secondaryButtonText}>{t('auth.login.loginButton')}</Text>
           </TouchableOpacity>
         </View>
 

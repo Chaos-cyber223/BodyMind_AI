@@ -11,5 +11,9 @@ openai==1.3.7
 python-dotenv==1.0.0
 httpx==0.25.2
 
+# 数据库和认证
+supabase==2.16.0
+python-jose==3.5.0
+
 # 开发测试
 pytest==7.4.3

@@ -1,9 +1,10 @@
+import 'react-native-url-polyfill/auto';
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
 
 // 导入屏幕
 import WelcomeScreen from './screens/WelcomeScreen';
@@ -13,9 +14,14 @@ import MealPlanScreen from './screens/MealPlanScreen';
 import ResearchScreen from './screens/ResearchScreen';
 import ProgressScreen from './screens/ProgressScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import LoginScreen from './screens/auth/LoginScreen';
+import RegisterScreen from './screens/auth/RegisterScreen';
 
 // 导入i18n系统
 import i18n from './localization/i18n';
+
+// 导入认证上下文
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -95,6 +101,67 @@ function MainTabs() {
   );
 }
 
+// 认证导航栈
+function AuthStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// 已认证用户导航栈
+function AppStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen 
+        name="ProfileSetup" 
+        component={ProfileSetupScreen}
+        options={{
+          headerShown: true,
+          title: 'Profile Setup',
+          headerStyle: {
+            backgroundColor: '#667eea',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen 
+        name="MainApp" 
+        component={MainTabs}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+// 根导航组件
+function RootNavigator() {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+        <ActivityIndicator size="large" color="#4285f4" />
+      </View>
+    );
+  }
+  
+  return (
+    <NavigationContainer>
+      <StatusBar style="light" />
+      {isAuthenticated ? <AppStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   // 初始化i18n系统
   useEffect(() => {
@@ -102,48 +169,8 @@ export default function App() {
   }, []);
   
   return (
-    <NavigationContainer>
-      <StatusBar style="light" />
-      <Stack.Navigator 
-        initialRouteName="Welcome"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen 
-          name="Welcome" 
-          component={WelcomeScreen}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen 
-          name="ProfileSetup" 
-          component={ProfileSetupScreen}
-          options={{
-            headerShown: true,
-            title: 'Profile Setup',
-            headerStyle: {
-              backgroundColor: '#667eea',
-            },
-            headerTintColor: '#ffffff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
-        <Stack.Screen 
-          name="MainApp" 
-          component={MainTabs}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen 
-          name="Test" 
-          component={TestScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
   );
 } 

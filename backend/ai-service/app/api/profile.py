@@ -1,10 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import Optional
 import math
 
 from ..models.user import UserProfile, TDEECalculation
 from ..services.tdee_service import TDEEService
+from ..services.supabase_service import supabase_service
+from ..middleware.auth import auth_bearer, get_current_user_id
 
 router = APIRouter()
 
@@ -23,12 +25,15 @@ class ProfileSetupResponse(BaseModel):
     tdee_calculation: TDEECalculation
     recommendations: dict
 
-@router.post("/setup", response_model=ProfileSetupResponse)
-async def setup_user_profile(request: ProfileSetupRequest):
+@router.post("/setup", response_model=ProfileSetupResponse, dependencies=[Depends(auth_bearer)])
+async def setup_user_profile(request: ProfileSetupRequest, req: Request):
     """
     Set up user profile and calculate TDEE
     """
     try:
+        # Get current user ID
+        user_id = get_current_user_id(req)
+        
         # Create user profile
         user_profile = UserProfile(
             age=request.age,
@@ -48,6 +53,34 @@ async def setup_user_profile(request: ProfileSetupRequest):
         # Generate recommendations
         recommendations = tdee_service.generate_recommendations(user_profile, tdee_calculation)
         
+        # Store profile in database
+        profile_data = {
+            "age": request.age,
+            "gender": request.gender,
+            "height": request.height,
+            "weight": request.weight,
+            "body_fat_percentage": request.body_fat_percentage,
+            "activity_level": request.activity_level,
+            "goal": request.goal,
+            "goal_weight": request.goal_weight,
+            "bmr": tdee_calculation.bmr,
+            "tdee": tdee_calculation.tdee,
+            "target_calories": tdee_calculation.target_calories,
+            "target_protein": tdee_calculation.target_protein,
+            "target_fat": tdee_calculation.target_fat,
+            "target_carbs": tdee_calculation.target_carbs
+        }
+        
+        # Check if profile exists
+        existing_profile = await supabase_service.get_user_profile(user_id)
+        if existing_profile:
+            await supabase_service.update_user_profile(user_id, profile_data)
+        else:
+            await supabase_service.create_user_profile(user_id, profile_data)
+        
+        # Record initial weight
+        await supabase_service.record_weight(user_id, request.weight)
+        
         return ProfileSetupResponse(
             user_profile=user_profile,
             tdee_calculation=tdee_calculation,
@@ -56,6 +89,25 @@ async def setup_user_profile(request: ProfileSetupRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to setup profile: {str(e)}")
+
+@router.get("/current", dependencies=[Depends(auth_bearer)])
+async def get_current_profile(req: Request):
+    """
+    Get current user's profile
+    """
+    try:
+        user_id = get_current_user_id(req)
+        profile = await supabase_service.get_user_profile(user_id)
+        
+        if not profile:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        
+        return profile
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get profile: {str(e)}")
 
 @router.get("/tdee")
 async def get_tdee_info():

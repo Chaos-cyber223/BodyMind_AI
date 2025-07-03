@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
@@ -7,6 +7,7 @@ from datetime import datetime
 from ..services.ai_service import AIService
 from ..models.chat import ChatMessage, ChatRequest, ChatResponse
 from ..config import get_settings
+from ..middleware.auth import auth_bearer, get_current_user_id
 
 router = APIRouter()
 
@@ -22,14 +23,17 @@ class MessageResponse(BaseModel):
     sources: Optional[List[str]] = None
     timestamp: datetime
 
-@router.post("/message", response_model=MessageResponse)
-async def send_message(request: MessageRequest):
+@router.post("/message", response_model=MessageResponse, dependencies=[Depends(auth_bearer)])
+async def send_message(request: MessageRequest, req: Request):
     """
     Send a message to the AI and get a response
     """
     try:
         # Get AI service
         ai_service = AIService()
+        
+        # Get current user ID
+        user_id = get_current_user_id(req)
         
         # Generate conversation ID if not provided
         conversation_id = request.conversation_id or str(uuid.uuid4())

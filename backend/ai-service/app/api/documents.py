@@ -1,18 +1,20 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request
 from typing import Optional
 import os
 import shutil
 from pathlib import Path
 
 from ..services.rag_service import RAGService
+from ..middleware.auth import auth_bearer, get_current_user_id
 
 router = APIRouter()
 
 UPLOAD_DIR = Path("./uploaded_documents")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
-@router.post("/upload")
+@router.post("/upload", dependencies=[Depends(auth_bearer)])
 async def upload_document(
+    req: Request,
     file: UploadFile = File(...),
     topic: Optional[str] = None,
     source: Optional[str] = None
@@ -52,7 +54,7 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
-@router.get("/topics")
+@router.get("/topics", dependencies=[Depends(auth_bearer)])
 async def get_topics():
     """
     Get all available topics in the knowledge base
@@ -61,7 +63,7 @@ async def get_topics():
     topics = rag_service.get_all_topics()
     return {"topics": topics}
 
-@router.post("/clear-memory")
+@router.post("/clear-memory", dependencies=[Depends(auth_bearer)])
 async def clear_memory():
     """
     Clear conversation memory

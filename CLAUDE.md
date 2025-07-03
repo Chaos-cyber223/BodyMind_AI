@@ -32,7 +32,11 @@ pip install -r requirements-minimal.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env to add SILICONFLOW_API_KEY
+# Edit .env to add required keys:
+# - SILICONFLOW_API_KEY (for AI models)
+# - SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (for auth)
+# OR for local PostgreSQL:
+# - DATABASE_URL, JWT_SECRET (see SUPABASE_SETUP.md)
 
 # Start AI service
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
@@ -40,6 +44,18 @@ python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
 
 # From project root
 npm run dev:ai
+```
+
+#### Database Setup (Supabase or Local PostgreSQL)
+```bash
+# Option 1: Supabase (Recommended)
+# Follow backend/database/SUPABASE_SETUP.md for detailed setup
+
+# Option 2: Local PostgreSQL
+# Requires PostgreSQL 14+ installed
+psql -U postgres -h localhost -p 5432
+# Password: Newbunny_25^+@cool
+# Then follow local setup in SUPABASE_SETUP.md
 ```
 
 ### Docker Development
@@ -77,7 +93,10 @@ npm run clean                           # Clean all services
 ### Tech Stack
 - **Mobile**: React Native + TypeScript + Expo + React Navigation
 - **Backend**: Python 3.10 + FastAPI + LangChain RAG system
-- **Database**: Chroma vector database for embeddings storage
+- **Database**: 
+  - Chroma vector database for embeddings storage
+  - PostgreSQL (via Supabase or local) for user data and logs
+- **Authentication**: Supabase Auth with JWT tokens
 - **DevOps**: Docker + docker-compose
 - **External APIs**: SiliconFlow API (DeepSeek-R1 + BGE-M3 embeddings)
 
@@ -97,6 +116,9 @@ npm run clean                           # Clean all services
 
 ### Database Schema
 - **Chroma Vector Database**: Embedded scientific research papers for RAG system
+- **PostgreSQL Database**: User authentication, profiles, weight logs, food logs, exercise logs
+  - See `backend/database/schema.sql` for complete schema
+  - Row Level Security (RLS) policies for data isolation
 - **AsyncStorage**: Local storage for user profiles and language preferences
 
 ### Development Environment
@@ -140,9 +162,17 @@ npm run clean                           # Clean all services
 - AI-powered food/exercise logging with real parsing
 - Source citations displayed in chat responses
 
+- Database and Authentication System
+- PostgreSQL database schema with users, weight_logs, food_logs, exercise_logs tables
+- Supabase Auth integration with email/password and OAuth support
+- Row Level Security (RLS) policies for secure data access
+- JWT token-based authentication
+- Local PostgreSQL development option
+
 **TODO:**
-- User authentication system with backend integration
-- Real data persistence for weight history and nutrition logs
+- Frontend authentication UI (login/signup screens)
+- Integrate Supabase client in React Native
+- Real-time data sync with Supabase subscriptions
 - Performance optimization and comprehensive error handling
 - Push notifications for meal and workout reminders
 - Export data functionality (PDF reports)
@@ -161,13 +191,34 @@ npm run clean                           # Clean all services
 ### AI Service Features
 ```bash
 # Available API endpoints:
+
+# Authentication endpoints
+POST /api/auth/signup           # Create new user account
+POST /api/auth/login            # Login with email/password
+POST /api/auth/logout           # Logout current user
+GET  /api/auth/me               # Get current user profile
+POST /api/auth/refresh          # Refresh JWT token
+
+# AI-powered endpoints
 POST /api/chat/message          # AI chat with LangChain RAG-enhanced responses
 POST /api/profile/setup         # User profile setup with TDEE calculation  
 POST /api/analysis/food         # Parse food descriptions ("I ate an apple")
 POST /api/analysis/exercise     # Parse exercise descriptions ("I ran 30 minutes")
+
+# Data logging endpoints (requires authentication)
+POST /api/logs/weight           # Log weight entry
+GET  /api/logs/weight           # Get weight history
+POST /api/logs/food             # Log food entry
+GET  /api/logs/food             # Get food logs
+POST /api/logs/exercise         # Log exercise entry
+GET  /api/logs/exercise         # Get exercise logs
+
+# Knowledge base management
 POST /api/documents/upload      # Upload PDF/TXT documents to knowledge base
 GET  /api/documents/topics      # Get available knowledge topics
 POST /api/documents/clear-memory # Clear conversation memory
+
+# System endpoints
 GET  /health                    # Service health check
 GET  /docs                      # Interactive API documentation
 ```
@@ -184,6 +235,22 @@ GET  /docs                      # Interactive API documentation
 ```bash
 # Test health endpoint
 curl http://localhost:8765/health
+
+# Authentication Tests
+# Create new user account
+curl -X POST "http://localhost:8765/api/auth/signup" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "password": "securepassword123", "full_name": "Test User"}'
+
+# Login to get JWT token
+curl -X POST "http://localhost:8765/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "password": "securepassword123"}'
+# Save the returned access_token for authenticated requests
+
+# Get current user profile (authenticated)
+curl -X GET "http://localhost:8765/api/auth/me" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 
 # Test LangChain RAG chat with SiliconFlow API
 curl -X POST "http://localhost:8765/api/chat/message" \
@@ -204,6 +271,22 @@ curl -X POST "http://localhost:8765/api/analysis/food" \
 curl -X POST "http://localhost:8765/api/analysis/exercise" \
   -H "Content-Type: application/json" \
   -d '{"description": "I ran for 30 minutes in the park"}'
+
+# Log weight entry (authenticated)
+curl -X POST "http://localhost:8765/api/logs/weight" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"weight": 70.5, "unit": "kg", "notes": "Morning weight after workout"}'
+
+# Get weight history (authenticated)
+curl -X GET "http://localhost:8765/api/logs/weight?limit=30" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
+# Log food entry (authenticated)
+curl -X POST "http://localhost:8765/api/logs/food" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Grilled chicken salad", "meal_type": "lunch", "calories": 450, "protein": 35, "carbs": 20, "fat": 25}'
 
 # Upload document to knowledge base
 curl -X POST "http://localhost:8765/api/documents/upload" \

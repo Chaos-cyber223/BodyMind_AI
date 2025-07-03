@@ -1,9 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 
 from ..services.parser_service import ParserService
+from ..services.supabase_service import supabase_service
 from ..models.nutrition import FoodItem, ExerciseItem
+from ..middleware.auth import auth_bearer, get_current_user_id
 
 router = APIRouter()
 
@@ -25,8 +28,8 @@ class ExerciseAnalysisResponse(BaseModel):
     total_calories_burned: float
     suggestions: List[str]
 
-@router.post("/food", response_model=FoodAnalysisResponse)
-async def analyze_food(request: FoodAnalysisRequest):
+@router.post("/food", response_model=FoodAnalysisResponse, dependencies=[Depends(auth_bearer)])
+async def analyze_food(request: FoodAnalysisRequest, req: Request):
     """
     Analyze food intake from natural language description
     """
@@ -48,6 +51,23 @@ async def analyze_food(request: FoodAnalysisRequest):
         # Generate suggestions
         suggestions = parser_service.generate_food_suggestions(foods, total_macros)
         
+        # Store in database
+        user_id = get_current_user_id(req)
+        for food in foods:
+            nutrition_data = {
+                "description": request.text,
+                "food_name": food.name,
+                "quantity": food.quantity,
+                "unit": food.unit,
+                "calories": food.calories,
+                "protein": food.protein,
+                "carbs": food.carbs,
+                "fat": food.fat,
+                "fiber": food.fiber,
+                "meal_type": food.meal_type
+            }
+            await supabase_service.log_nutrition(user_id, nutrition_data)
+        
         return FoodAnalysisResponse(
             foods=foods,
             total_calories=total_calories,
@@ -58,8 +78,8 @@ async def analyze_food(request: FoodAnalysisRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to analyze food: {str(e)}")
 
-@router.post("/exercise", response_model=ExerciseAnalysisResponse)
-async def analyze_exercise(request: ExerciseAnalysisRequest):
+@router.post("/exercise", response_model=ExerciseAnalysisResponse, dependencies=[Depends(auth_bearer)])
+async def analyze_exercise(request: ExerciseAnalysisRequest, req: Request):
     """
     Analyze exercise from natural language description
     """
@@ -78,6 +98,19 @@ async def analyze_exercise(request: ExerciseAnalysisRequest):
         # Generate suggestions
         suggestions = parser_service.generate_exercise_suggestions(exercises)
         
+        # Store in database
+        user_id = get_current_user_id(req)
+        for exercise in exercises:
+            exercise_data = {
+                "description": request.text,
+                "exercise_name": exercise.name,
+                "duration_minutes": exercise.duration_minutes,
+                "intensity": exercise.intensity,
+                "calories_burned": exercise.calories_burned,
+                "exercise_type": exercise.exercise_type
+            }
+            await supabase_service.log_exercise(user_id, exercise_data)
+        
         return ExerciseAnalysisResponse(
             exercises=exercises,
             total_calories_burned=total_calories_burned,
@@ -86,6 +119,83 @@ async def analyze_exercise(request: ExerciseAnalysisRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to analyze exercise: {str(e)}")
+
+@router.get("/nutrition-logs", dependencies=[Depends(auth_bearer)])
+async def get_nutrition_logs(req: Request, date: Optional[str] = None):
+    """
+    Get nutrition logs for the current user
+    
+    Args:
+        date: Optional date filter in YYYY-MM-DD format
+    """
+    try:
+        user_id = get_current_user_id(req)
+        logs = await supabase_service.get_nutrition_logs(user_id, date)
+        return {"logs": logs, "count": len(logs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get nutrition logs: {str(e)}")
+
+@router.get("/exercise-logs", dependencies=[Depends(auth_bearer)])
+async def get_exercise_logs(req: Request, date: Optional[str] = None):
+    """
+    Get exercise logs for the current user
+    
+    Args:
+        date: Optional date filter in YYYY-MM-DD format
+    """
+    try:
+        user_id = get_current_user_id(req)
+        logs = await supabase_service.get_exercise_logs(user_id, date)
+        return {"logs": logs, "count": len(logs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get exercise logs: {str(e)}")
+
+@router.get("/daily-summary", dependencies=[Depends(auth_bearer)])
+async def get_daily_summary(req: Request, date: Optional[str] = None):
+    """
+    Get daily summary of nutrition and exercise
+    
+    Args:
+        date: Date in YYYY-MM-DD format (defaults to today)
+    """
+    try:
+        user_id = get_current_user_id(req)
+        
+        # Default to today if no date provided
+        if not date:
+            date = datetime.now().strftime("%Y-%m-%d")
+        
+        # Get logs
+        nutrition_logs = await supabase_service.get_nutrition_logs(user_id, date)
+        exercise_logs = await supabase_service.get_exercise_logs(user_id, date)
+        
+        # Calculate totals
+        total_calories = sum(log.get("calories", 0) for log in nutrition_logs)
+        total_protein = sum(log.get("protein", 0) for log in nutrition_logs)
+        total_carbs = sum(log.get("carbs", 0) for log in nutrition_logs)
+        total_fat = sum(log.get("fat", 0) for log in nutrition_logs)
+        total_fiber = sum(log.get("fiber", 0) for log in nutrition_logs)
+        total_calories_burned = sum(log.get("calories_burned", 0) for log in exercise_logs)
+        
+        return {
+            "date": date,
+            "nutrition": {
+                "total_calories": total_calories,
+                "total_protein": total_protein,
+                "total_carbs": total_carbs,
+                "total_fat": total_fat,
+                "total_fiber": total_fiber,
+                "log_count": len(nutrition_logs)
+            },
+            "exercise": {
+                "total_calories_burned": total_calories_burned,
+                "total_duration_minutes": sum(log.get("duration_minutes", 0) for log in exercise_logs),
+                "log_count": len(exercise_logs)
+            },
+            "net_calories": total_calories - total_calories_burned
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get daily summary: {str(e)}")
 
 @router.get("/nutrition-database")
 async def get_nutrition_info():

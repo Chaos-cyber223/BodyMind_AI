@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '../localization/i18n';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function SettingsScreen() {
   const { t, language, setLanguage } = useTranslation();
+  const { signOut, user } = useAuth();
   
   // Notification states
   const [dailyReminders, setDailyReminders] = useState(true);
@@ -17,34 +19,42 @@ export default function SettingsScreen() {
   const handleSignOut = () => {
     Alert.alert(
       t('settings.signOut'),
-      'Are you sure you want to sign out?',
+      t('settings.signOut.confirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: () => console.log('Sign out') }
+        { text: t('settings.signOut.cancel'), style: 'cancel' },
+        { text: t('settings.signOut.confirmButton'), style: 'destructive', onPress: async () => {
+          await signOut();
+        }}
       ]
     );
   };
 
-  const renderProfileSection = () => (
-    <View style={styles.profileSection}>
-      <View style={styles.profileContent}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>Q</Text>
-        </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{t('settings.profile.name')}</Text>
-          <Text style={styles.profileEmail}>{t('settings.profile.email')}</Text>
-          <View style={styles.activePlanRow}>
-            <View style={styles.activeDot} />
-            <Text style={styles.activePlanText}>{t('settings.profile.activePlan')}</Text>
+  const renderProfileSection = () => {
+    const userEmail = user?.email || 'guest@bodymind.ai';
+    const userName = userEmail.split('@')[0];
+    const firstLetter = userName[0].toUpperCase();
+    
+    return (
+      <View style={styles.profileSection}>
+        <View style={styles.profileContent}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{firstLetter}</Text>
           </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{userName}</Text>
+            <Text style={styles.profileEmail}>{userEmail}</Text>
+            <View style={styles.activePlanRow}>
+              <View style={styles.activeDot} />
+              <Text style={styles.activePlanText}>{t('settings.profile.activePlan')}</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.editButton}>
+            <Text style={styles.editIcon}>✏️</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.editIcon}>✏️</Text>
-        </TouchableOpacity>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderLanguageSection = () => (
     <View style={styles.section}>
