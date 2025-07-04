@@ -1,26 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient, Session, User } from '@supabase/supabase-js';
 import { Alert } from 'react-native';
-
-// Supabase configuration
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
-
-// Create Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
 
 // Auth context types
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: any | null;
+  session: any | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -31,19 +16,26 @@ interface AuthContextType {
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// API配置
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8765';
+
 // Auth provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<any | null>(null);
+  const [session, setSession] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
+    // 检查本地存储的token
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
+        const token = await AsyncStorage.getItem('access_token');
+        const userData = await AsyncStorage.getItem('user_data');
+        
+        if (token && userData) {
+          setSession({ access_token: token });
+          setUser(JSON.parse(userData));
+        }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
@@ -52,68 +44,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initializeAuth();
-
-    // Listen for auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (event === 'SIGNED_IN') {
-        // Handle successful sign in
-        console.log('User signed in:', session?.user?.email);
-      } else if (event === 'SIGNED_OUT') {
-        // Handle sign out
-        console.log('User signed out');
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
   }, []);
 
-  // Sign in function
+  // Sign in function - 调用后端API
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      console.log('发送登录请求到:', `${API_URL}/api/auth/login`);
+      console.log('登录数据:', { email, password });
+      
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        return { error };
+      console.log('响应状态:', response.status);
+      const data = await response.json();
+      console.log('响应数据:', data);
+
+      if (!response.ok) {
+        return { error: new Error(data.detail || 'Login failed') };
       }
+
+      // 保存token和用户信息
+      await AsyncStorage.setItem('access_token', data.access_token);
+      await AsyncStorage.setItem('user_data', JSON.stringify(data.user));
+      
+      setSession({ access_token: data.access_token });
+      setUser(data.user);
 
       return { error: null };
     } catch (error) {
+      console.error('Login error:', error);
       return { error: error as Error };
     }
   };
 
-  // Sign up function
+  // Sign up function - 调用后端API
   const signUp = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        return { error };
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: new Error(data.detail || 'Signup failed') };
       }
 
-      // Check if email confirmation is required
-      if (data?.user && !data.session) {
-        Alert.alert(
-          'Confirmation Required',
-          'Please check your email to confirm your account before signing in.',
-          [{ text: 'OK' }]
-        );
-      }
+      // 注册成功后自动登录
+      await AsyncStorage.setItem('access_token', data.access_token);
+      await AsyncStorage.setItem('user_data', JSON.stringify(data.user));
+      
+      setSession({ access_token: data.access_token });
+      setUser(data.user);
 
       return { error: null };
     } catch (error) {
+      console.error('Signup error:', error);
       return { error: error as Error };
     }
   };
@@ -121,11 +116,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign out function
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        Alert.alert('Error', 'Failed to sign out. Please try again.');
-      }
+      await AsyncStorage.removeItem('access_token');
+      await AsyncStorage.removeItem('user_data');
+      setSession(null);
+      setUser(null);
     } catch (error) {
       console.error('Error signing out:', error);
       Alert.alert('Error', 'An unexpected error occurred while signing out.');
@@ -153,6 +147,3 @@ export function useAuth() {
   }
   return context;
 }
-
-// Export supabase client for direct use if needed
-export { supabase };

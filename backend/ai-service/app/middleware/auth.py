@@ -11,12 +11,13 @@ logger = logging.getLogger(__name__)
 
 class AuthSettings(BaseSettings):
     """Authentication configuration settings."""
-    supabase_jwt_secret: str = ""
+    supabase_jwt_secret: str = "your-jwt-secret-key"
     jwt_algorithm: str = "HS256"
     jwt_audience: str = "authenticated"
     
     class Config:
         env_file = ".env"
+        extra = "ignore"  # 忽略额外的环境变量
 
 
 settings = AuthSettings()

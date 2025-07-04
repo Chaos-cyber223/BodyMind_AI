@@ -11,7 +11,7 @@ BodyMind_AI is a full-stack AI-powered fat loss expert application with React Na
 ### Mobile Development (React Native + Expo)
 ```bash
 # Start mobile development
-cd mobile && npm run web                # Web development at http://localhost:19006
+cd mobile && npm run web                # Web development at http://localhost:8081
 cd mobile && npm start                  # Expo development server
 cd mobile && npm run android            # Android emulator
 cd mobile && npm run ios                # iOS simulator
@@ -22,40 +22,43 @@ npm run dev:mobile                      # From project root
 
 ### Backend Services
 
-#### AI Service (Python FastAPI)
+#### AI Service (Simplified Authentication)
 ```bash
-# Setup AI service environment
+# Quick Start (Simplified API)
+cd backend/ai-service
+python test_simple_api.py &
+# Simple auth API running on http://localhost:8765
+
+# API endpoints available:
+# GET  /health                    # Health check
+# POST /api/auth/login           # Login with email/password
+
+# Test account:
+# Email: test@example.com
+# Password: Test123456!
+
+# Full AI service setup (if needed)
 cd backend/ai-service
 python3 -m venv venv
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements-minimal.txt
 
-# Configure environment
-cp .env.example .env
-# Edit .env to add required keys:
-# - SILICONFLOW_API_KEY (for AI models)
-# - SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (for auth)
-# OR for local PostgreSQL:
-# - DATABASE_URL, JWT_SECRET (see SUPABASE_SETUP.md)
-
-# Start AI service
+# Configure environment (.env file already set up)
+# Start full AI service
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
 # API docs available at: http://localhost:8765/docs
-
-# From project root
-npm run dev:ai
 ```
 
-#### Database Setup (Supabase or Local PostgreSQL)
+#### Authentication System
 ```bash
-# Option 1: Supabase (Recommended)
-# Follow backend/database/SUPABASE_SETUP.md for detailed setup
+# Current Implementation: Simplified In-Memory Auth
+# - No database required for basic functionality
+# - Test account pre-configured in test_simple_api.py
+# - JWT token-based authentication
+# - Frontend connects directly to backend API
 
-# Option 2: Local PostgreSQL
-# Requires PostgreSQL 14+ installed
-psql -U postgres -h localhost -p 5432
-# Password: Newbunny_25^+@cool
-# Then follow local setup in SUPABASE_SETUP.md
+# For production: PostgreSQL/Supabase setup available
+# See backend/database/SUPABASE_SETUP.md for detailed setup
 ```
 
 ### Docker Development
@@ -162,23 +165,24 @@ npm run clean                           # Clean all services
 - AI-powered food/exercise logging with real parsing
 - Source citations displayed in chat responses
 
-- Database and Authentication System
-- PostgreSQL database schema with users, weight_logs, food_logs, exercise_logs tables
-- Supabase Auth integration with email/password and OAuth support
-- Row Level Security (RLS) policies for secure data access
+- Simplified Authentication System
+- In-memory user store with bcrypt password hashing
 - JWT token-based authentication
-- Local PostgreSQL development option
+- Direct API integration (no Supabase dependency)
+- Test account pre-configured for development
+- CORS configured for web development
+- AsyncStorage for token persistence
 
 **TODO:**
-- Frontend authentication UI (login/signup screens)
-- Integrate Supabase client in React Native
-- Real-time data sync with Supabase subscriptions
+- Fix frontend login authentication flow
+- Real-time data sync with backend services
 - Performance optimization and comprehensive error handling
 - Push notifications for meal and workout reminders
 - Export data functionality (PDF reports)
+- Migrate to production database (PostgreSQL/Supabase)
 
 ### Development Notes
-- **Mobile app runs on port 19006** - React Native app with backend integration
+- **Mobile app runs on port 8081** - React Native web app with simplified auth
 - **AI service runs on port 8765** - FastAPI server with LangChain RAG
 - SiliconFlow API configured with DeepSeek-R1 model (requires API key)
 - Chroma vector database persists at `./chroma_db/`
@@ -236,21 +240,15 @@ GET  /docs                      # Interactive API documentation
 # Test health endpoint
 curl http://localhost:8765/health
 
-# Authentication Tests
-# Create new user account
-curl -X POST "http://localhost:8765/api/auth/signup" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "securepassword123", "full_name": "Test User"}'
-
-# Login to get JWT token
-curl -X POST "http://localhost:8765/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "securepassword123"}'
-# Save the returned access_token for authenticated requests
-
-# Get current user profile (authenticated)
-curl -X GET "http://localhost:8765/api/auth/me" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+# Authentication Tests (Simplified API)
+# Test login with pre-configured account
+python -c "
+import requests
+response = requests.post('http://localhost:8765/api/auth/login', 
+    json={'email': 'test@example.com', 'password': 'Test123456!'})
+print('Status:', response.status_code)
+print('Response:', response.json())
+"
 
 # Test LangChain RAG chat with SiliconFlow API
 curl -X POST "http://localhost:8765/api/chat/message" \
@@ -299,7 +297,7 @@ curl -X POST "http://localhost:8765/api/documents/upload" \
 ```bash
 # Start mobile development
 cd mobile && npm run web
-# Open http://localhost:19006 in browser
+# Open http://localhost:8081 in browser
 # Set browser to mobile view (iPhone 14 Pro recommended)
 
 # Test complete user flow:
