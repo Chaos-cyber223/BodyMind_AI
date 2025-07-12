@@ -23,6 +23,9 @@ import i18n from './localization/i18n';
 // 导入认证上下文
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
+// 导入主题上下文
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -37,20 +40,22 @@ function TestScreen({ route }: any) {
 
 // 主应用标签导航
 function MainTabs() {
+  const { theme } = useTheme();
+  
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: theme.colors.tabBarBackground,
           borderTopWidth: 1,
-          borderTopColor: '#e5e7eb',
+          borderTopColor: theme.colors.border,
           paddingBottom: 8,
           paddingTop: 8,
           height: 60,
         },
-        tabBarActiveTintColor: '#6366F1',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: theme.colors.tabBarActive,
+        tabBarInactiveTintColor: theme.colors.tabBarInactive,
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',
@@ -114,8 +119,14 @@ function AuthStack() {
 
 // 已认证用户导航栈
 function AppStack() {
+  const { isProfileComplete } = useAuth();
+  const { theme } = useTheme();
+  
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator 
+      screenOptions={{ headerShown: false }}
+      initialRouteName={isProfileComplete ? "MainApp" : "ProfileSetup"}
+    >
       <Stack.Screen 
         name="ProfileSetup" 
         component={ProfileSetupScreen}
@@ -123,7 +134,7 @@ function AppStack() {
           headerShown: true,
           title: 'Profile Setup',
           headerStyle: {
-            backgroundColor: '#667eea',
+            backgroundColor: theme.colors.primary,
           },
           headerTintColor: '#ffffff',
           headerTitleStyle: {
@@ -145,18 +156,24 @@ function AppStack() {
 // 根导航组件
 function RootNavigator() {
   const { isAuthenticated, loading } = useAuth();
+  const { theme } = useTheme();
   
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
-        <ActivityIndicator size="large" color="#4285f4" />
+      <View style={{ 
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: theme.colors.background 
+      }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
   
   return (
     <NavigationContainer>
-      <StatusBar style="light" />
+      <StatusBar style={theme.colors.statusBarStyle} />
       {isAuthenticated ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
@@ -169,8 +186,10 @@ export default function App() {
   }, []);
   
   return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+    </ThemeProvider>
   );
 } 

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from '../localization/i18n';
 import LanguageToggle from '../components/LanguageToggle';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,6 +37,7 @@ interface ChatScreenProps {
 
 export default function ChatScreen({ navigation }: ChatScreenProps) {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -200,9 +202,11 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
     );
   };
 
+  const styles = createStyles(theme);
+  
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
+      <StatusBar barStyle={theme.colors.statusBarStyle === 'dark' ? 'dark-content' : 'light-content'} backgroundColor={theme.colors.background} />
       
       {/* Header */}
       <View style={styles.header}>
@@ -329,23 +333,23 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
   },
   
   // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.surface,
     paddingTop: 50,
     paddingBottom: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e8eaed',
-    shadowColor: '#000',
+    borderBottomColor: theme.colors.border,
+    shadowColor: theme.colors.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -355,14 +359,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f1f3f4',
+    backgroundColor: theme.colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   backButtonText: {
     fontSize: 20,
-    color: '#5f6368',
+    color: theme.colors.textSecondary,
     fontWeight: '600',
   },
   headerContent: {

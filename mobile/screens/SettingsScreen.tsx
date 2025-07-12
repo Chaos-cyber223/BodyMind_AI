@@ -3,18 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '../localization/i18n';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function SettingsScreen() {
   const { t, language, setLanguage } = useTranslation();
   const { signOut, user } = useAuth();
+  const { theme, setTheme, toggleTheme } = useTheme();
   
   // Notification states
   const [dailyReminders, setDailyReminders] = useState(true);
   const [workoutReminders, setWorkoutReminders] = useState(true);
   const [scienceTips, setScienceTips] = useState(false);
-  
-  // Theme state
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   const handleSignOut = () => {
     Alert.alert(
@@ -90,28 +89,38 @@ export default function SettingsScreen() {
     </View>
   );
 
-  const renderThemeSection = () => (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{language === 'zh' ? '主题' : 'Theme'}</Text>
-      </View>
-      
-      <View style={styles.menuItem}>
-        <View style={styles.menuItemContent}>
-          <View style={[styles.menuIcon, { backgroundColor: '#fff3e0' }]}>
-            <Text style={[styles.menuIconText, { color: '#f57c00' }]}>☀️</Text>
-          </View>
-          <Text style={styles.menuItemText}>{language === 'zh' ? '浅色' : 'Light'}</Text>
+  const renderThemeSection = () => {
+    const isDark = theme.type === 'dark';
+    const themeText = language === 'zh' 
+      ? (isDark ? '深色' : '浅色')
+      : (isDark ? 'Dark' : 'Light');
+    const themeIcon = isDark ? '🌙' : '☀️';
+    const iconBackgroundColor = isDark ? '#1a1a2e' : '#fff3e0';
+    const iconColor = isDark ? '#bb86fc' : '#f57c00';
+    
+    return (
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{language === 'zh' ? '主题' : 'Theme'}</Text>
         </View>
-        <Switch
-          value={theme === 'dark'}
-          onValueChange={(value) => setTheme(value ? 'dark' : 'light')}
-          trackColor={{ false: '#e0e0e0', true: '#1976d2' }}
-          thumbColor={theme === 'dark' ? '#ffffff' : '#f4f3f4'}
-        />
+        
+        <View style={styles.menuItem}>
+          <View style={styles.menuItemContent}>
+            <View style={[styles.menuIcon, { backgroundColor: iconBackgroundColor }]}>
+              <Text style={[styles.menuIconText, { color: iconColor }]}>{themeIcon}</Text>
+            </View>
+            <Text style={styles.menuItemText}>{themeText}</Text>
+          </View>
+          <Switch
+            value={theme.type === 'dark'}
+            onValueChange={(value) => setTheme(value ? 'dark' : 'light')}
+            trackColor={{ false: theme.colors.switchTrackColor, true: theme.colors.primary }}
+            thumbColor={theme.type === 'dark' ? theme.colors.switchThumbColor : '#f4f3f4'}
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderHealthGoals = () => (
     <View style={styles.section}>
@@ -254,6 +263,8 @@ export default function SettingsScreen() {
     </View>
   );
 
+  const styles = createStyles(theme);
+  
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -272,20 +283,20 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: theme.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   profileSection: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.profileBackground,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: theme.colors.borderLight,
   },
   profileContent: {
     flexDirection: 'row',
@@ -295,7 +306,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#1976d2',
+    backgroundColor: theme.colors.avatarBackground,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
@@ -303,7 +314,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: theme.colors.avatarText,
   },
   profileInfo: {
     flex: 1,
@@ -311,12 +322,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#212121',
+    color: theme.colors.text,
     marginBottom: 4,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#757575',
+    color: theme.colors.textSecondary,
     marginBottom: 4,
   },
   activePlanRow: {
@@ -340,14 +351,14 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     fontSize: 18,
-    color: '#1976d2',
+    color: theme.colors.primary,
   },
   section: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.sectionBackground,
     marginTop: 24,
     marginHorizontal: 24,
     borderRadius: 16,
-    shadowColor: '#000',
+    shadowColor: theme.colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -357,12 +368,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: theme.colors.borderLight,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#212121',
+    color: theme.colors.text,
   },
   menuItem: {
     flexDirection: 'row',
@@ -373,7 +384,7 @@ const styles = StyleSheet.create({
   },
   menuItemBorder: {
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
+    borderTopColor: theme.colors.borderLight,
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -394,25 +405,25 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#212121',
+    color: theme.colors.text,
   },
   chevron: {
     fontSize: 18,
-    color: '#bdbdbd',
+    color: theme.colors.textTertiary,
     fontWeight: '300',
   },
   checkmark: {
     fontSize: 18,
-    color: '#1976d2',
+    color: theme.colors.primary,
     fontWeight: 'bold',
   },
   versionText: {
     fontSize: 12,
-    color: '#757575',
+    color: theme.colors.textSecondary,
     marginTop: 2,
   },
   signOutButton: {
-    backgroundColor: '#ffebee',
+    backgroundColor: theme.colors.buttonBackground,
     marginTop: 24,
     marginHorizontal: 24,
     marginBottom: 24,
@@ -423,6 +434,6 @@ const styles = StyleSheet.create({
   signOutText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#d32f2f',
+    color: theme.colors.buttonText,
   },
-}); 
+});
