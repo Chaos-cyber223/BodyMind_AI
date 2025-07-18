@@ -30,25 +30,37 @@ export default function SettingsScreen() {
 
   // 开发模式强制登出（临时解决方案）
   const handleForceSignOut = () => {
-    Alert.alert(
-      '🔧 Force Sign Out (Dev Mode)',
-      'This will clear all data and reload the page. Continue?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Force Sign Out', 
-          style: 'destructive', 
-          onPress: () => {
-            // 直接清除所有存储并刷新
-            if (typeof window !== 'undefined') {
-              localStorage.clear();
-              sessionStorage.clear();
-              window.location.href = '/';
-            }
-          }
-        }
-      ]
-    );
+    console.log('🔴 Force Sign Out clicked!');
+    
+    // 尝试不使用Alert，直接执行
+    try {
+      console.log('🔴 Clearing localStorage...');
+      localStorage.clear();
+      
+      console.log('🔴 Clearing sessionStorage...');
+      sessionStorage.clear();
+      
+      console.log('🔴 Clearing AsyncStorage...');
+      AsyncStorage.clear();
+      
+      // 尝试多种刷新方法
+      console.log('🔴 Attempting to reload page...');
+      
+      // 方法1：直接设置href
+      window.location.href = 'http://localhost:8081';
+      
+      // 如果方法1不工作，100ms后尝试方法2
+      setTimeout(() => {
+        window.location.reload(true);
+      }, 100);
+      
+    } catch (error) {
+      console.error('🔴 Force sign out error:', error);
+      // 最后的手段：使用原生JS
+      if (window.confirm('Force sign out failed. Try manual reload?')) {
+        window.location.replace('http://localhost:8081');
+      }
+    }
   };
 
   const renderProfileSection = () => {

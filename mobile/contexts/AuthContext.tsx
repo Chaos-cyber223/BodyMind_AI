@@ -130,30 +130,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔴 SignOut: Starting sign out process...');
       
-      // 清除AsyncStorage
+      // 清除状态（先清除状态，避免异步问题）
+      setSession(null);
+      setUser(null);
+      setIsProfileCompleteState(false);
+      console.log('🔴 SignOut: State cleared');
+      
+      // Web版本：直接使用localStorage（同步操作）
+      if (typeof window !== 'undefined' && window.localStorage) {
+        console.log('🔴 SignOut: Clearing localStorage directly...');
+        localStorage.clear();
+        
+        // 立即刷新，不等待
+        console.log('🔴 SignOut: Reloading page...');
+        window.location.href = 'http://localhost:8081';
+        return; // 不执行后续代码
+      }
+      
+      // 原生版本：使用AsyncStorage
       await AsyncStorage.removeItem('access_token');
       await AsyncStorage.removeItem('user_data');
       await AsyncStorage.removeItem('profile_complete');
       console.log('🔴 SignOut: AsyncStorage cleared');
-      
-      // 清除状态
-      setSession(null);
-      setUser(null);
-      setIsProfileCompleteState(false);
-      console.log('🔴 SignOut: State cleared, session:', null);
-      
-      // 对于Web版本，也清除localStorage
-      if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.removeItem('access_token');
-        window.localStorage.removeItem('user_data');
-        window.localStorage.removeItem('profile_complete');
-        console.log('🔴 SignOut: localStorage cleared');
-        
-        // Web版本需要刷新页面才能正确重置导航
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
-      }
     } catch (error) {
       console.error('Error signing out:', error);
       Alert.alert('Error', 'An unexpected error occurred while signing out.');
