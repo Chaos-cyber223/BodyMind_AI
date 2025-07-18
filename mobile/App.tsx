@@ -131,15 +131,7 @@ function AppStack() {
         name="ProfileSetup" 
         component={ProfileSetupScreen}
         options={{
-          headerShown: true,
-          title: 'Profile Setup',
-          headerStyle: {
-            backgroundColor: theme.colors.primary,
-          },
-          headerTintColor: '#ffffff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          headerShown: false,
         }}
       />
       <Stack.Screen 
@@ -155,8 +147,12 @@ function AppStack() {
 
 // 根导航组件
 function RootNavigator() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, session } = useAuth();
   const { theme } = useTheme();
+  
+  console.log('🔵 RootNavigator: isAuthenticated =', isAuthenticated);
+  console.log('🔵 RootNavigator: session =', session);
+  console.log('🔵 RootNavigator: loading =', loading);
   
   if (loading) {
     return (

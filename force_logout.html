@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>强制登出 - BodyMind AI</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .status {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .warning {
+            color: #ff6b6b;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔓 BodyMind AI - 强制登出工具</h1>
+        
+        <div class="status">
+            <h3>📋 当前存储状态</h3>
+            <div id="storage-status" class="log"></div>
+        </div>
+
+        <div class="warning">
+            ⚠️ 这将清除所有应用数据并强制登出！
+        </div>
+
+        <button onclick="forceLogout()">🚪 强制登出并清除所有数据</button>
+
+        <div id="result" style="margin-top: 20px;"></div>
+
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+            <p>清除后，请访问: <a href="http://localhost:8081" target="_blank">http://localhost:8081</a></p>
+        </div>
+    </div>
+
+    <script>
+        // 检查存储状态
+        function checkStorage() {
+            const status = document.getElementById('storage-status');
+            const keys = [
+                'access_token',
+                'user_data', 
+                'profile_complete',
+                'language',
+                'user_profile'
+            ];
+            
+            let html = '<strong>LocalStorage 内容:</strong><br>';
+            let hasData = false;
+            
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    hasData = true;
+                    html += `✅ ${key}: ${value.substring(0, 30)}...<br>`;
+                } else {
+                    html += `❌ ${key}: 未找到<br>`;
+                }
+            });
+            
+            if (!hasData) {
+                html += '<br><em>存储已清空！</em>';
+            }
+            
+            status.innerHTML = html;
+            return hasData;
+        }
+
+        // 强制登出
+        function forceLogout() {
+            const result = document.getElementById('result');
+            
+            try {
+                // 1. 清除所有localStorage
+                console.log('🧹 清除 localStorage...');
+                localStorage.clear();
+                
+                // 2. 清除特定的键（双重保险）
+                const keysToRemove = [
+                    'access_token',
+                    'user_data',
+                    'profile_complete',
+                    'language',
+                    'user_profile',
+                    'theme',
+                    'RCTAsyncStorage'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                    console.log(`✅ 删除: ${key}`);
+                });
+                
+                // 3. 清除sessionStorage
+                console.log('🧹 清除 sessionStorage...');
+                sessionStorage.clear();
+                
+                // 4. 清除cookies (如果有)
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                result.innerHTML = `
+                    <div class="status success">
+                        <h3>✅ 登出成功！</h3>
+                        <p>所有认证数据已清除。</p>
+                        <p><strong>现在请：</strong></p>
+                        <ol>
+                            <li>关闭当前的 localhost:8081 标签页</li>
+                            <li>重新访问 <a href="http://localhost:8081" target="_blank">http://localhost:8081</a></li>
+                            <li>你应该会看到 Welcome 登录页面</li>
+                        </ol>
+                    </div>
+                `;
+                
+                // 5. 更新存储状态显示
+                setTimeout(() => {
+                    checkStorage();
+                }, 100);
+                
+            } catch (error) {
+                console.error('清除失败:', error);
+                result.innerHTML = `
+                    <div class="status error">
+                        <h3>❌ 清除失败</h3>
+                        <p>错误: ${error.message}</p>
+                        <p>请打开浏览器控制台手动执行: <code>localStorage.clear()</code></p>
+                    </div>
+                `;
+            }
+        }
+
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkStorage();
+            
+            // 每秒更新一次状态
+            setInterval(checkStorage, 1000);
+        };
+    </script>
+</body>
+</html>

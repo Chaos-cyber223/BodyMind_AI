@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试Sign Out功能</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        pre {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>BodyMind AI - Sign Out问题调试</h1>
+    
+    <div class="info">
+        <h2>问题描述</h2>
+        <p>点击Sign Out后不会退出到登录页面</p>
+    </div>
+
+    <h2>调试步骤</h2>
+    
+    <h3>1. 检查当前localStorage内容</h3>
+    <button onclick="checkStorage()">检查Storage</button>
+    <pre id="storage-content"></pre>
+
+    <h3>2. 手动清除认证数据</h3>
+    <button onclick="clearAuth()">清除认证数据</button>
+
+    <h3>3. 清除所有数据</h3>
+    <button onclick="clearAll()">清除所有数据</button>
+
+    <h3>4. 检查控制台日志</h3>
+    <div class="info">
+        <p>请打开浏览器开发者工具(F12)，在Console中查看以下日志：</p>
+        <ul>
+            <li>🟢 Auth Init: 初始化日志</li>
+            <li>🔴 SignOut: 登出日志</li>
+            <li>🔵 RootNavigator: 导航状态日志</li>
+        </ul>
+    </div>
+
+    <h2>解决方案</h2>
+    <div class="info">
+        <h3>临时解决方案：</h3>
+        <ol>
+            <li>点击"清除认证数据"按钮</li>
+            <li>刷新页面（F5或Ctrl+R）</li>
+            <li>应该会返回到登录页面</li>
+        </ol>
+        
+        <h3>问题原因分析：</h3>
+        <p>可能的原因：</p>
+        <ul>
+            <li>AsyncStorage在Web版本中使用的是localStorage的polyfill</li>
+            <li>状态更新后React组件没有正确重新渲染</li>
+            <li>需要强制刷新才能看到效果</li>
+        </ul>
+    </div>
+
+    <script>
+        function checkStorage() {
+            const keys = ['access_token', 'user_data', 'profile_complete', 'language'];
+            let content = 'LocalStorage内容:\n\n';
+            
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                content += `${key}: ${value ? value.substring(0, 50) + '...' : 'null'}\n`;
+            });
+            
+            document.getElementById('storage-content').textContent = content;
+        }
+
+        function clearAuth() {
+            const authKeys = ['access_token', 'user_data', 'profile_complete'];
+            authKeys.forEach(key => {
+                localStorage.removeItem(key);
+                console.log(`已删除: ${key}`);
+            });
+            alert('认证数据已清除！请刷新页面。');
+        }
+
+        function clearAll() {
+            localStorage.clear();
+            alert('所有数据已清除！请刷新页面。');
+        }
+
+        // 页面加载时自动检查
+        window.onload = function() {
+            checkStorage();
+        };
+    </script>
+</body>
+</html>

@@ -23,13 +23,17 @@ USERS = {
     "test@example.com": {
         "id": "test-user-id",
         "email": "test@example.com",
-        "hashed_password": "$2b$12$jh5B7TLDnEEgJ1e1EsfMauit3w9Vnd3TJPFa6LaVht8WyFrOClZqG"  # Test123456!
+        "hashed_password": "$2b$12$GSZK3mgufL9yJIJHfe/Imej6zjAJTE1LijtSCOar9se6K8VCyg1EC"  # Test123456!
     }
 }
 
 JWT_SECRET = "simple-test-secret"
 
 class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class SignupRequest(BaseModel):
     email: str
     password: str
 
@@ -69,6 +73,51 @@ async def login(request: LoginRequest):
         "user": {
             "id": user["id"],
             "email": user["email"],
+            "created_at": datetime.utcnow().isoformat()
+        }
+    }
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest):
+    print(f"注册请求: email={request.email}")
+    
+    # 检查用户是否已存在
+    if request.email in USERS:
+        print(f"用户已存在: {request.email}")
+        raise HTTPException(status_code=400, detail="User already exists")
+    
+    # 密码强度检查
+    if len(request.password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    
+    # 哈希密码
+    hashed_password = bcrypt.hashpw(request.password.encode('utf-8'), bcrypt.gensalt())
+    
+    # 创建新用户
+    user_id = str(uuid.uuid4())
+    USERS[request.email] = {
+        "id": user_id,
+        "email": request.email,
+        "hashed_password": hashed_password.decode('utf-8')
+    }
+    
+    print(f"用户注册成功: {request.email}")
+    
+    # 生成JWT token
+    token_data = {
+        "user_id": user_id,
+        "email": request.email,
+        "exp": datetime.utcnow() + timedelta(hours=24)
+    }
+    access_token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expires_in": 86400,
+        "user": {
+            "id": user_id,
+            "email": request.email,
             "created_at": datetime.utcnow().isoformat()
         }
     }

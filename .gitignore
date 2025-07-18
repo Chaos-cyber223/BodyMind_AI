@@ -3,12 +3,12 @@
 # ================================
 
 # 🚫 开发计划文档 (不要提交到GitHub)
-docs/DEVELOPMENT_PLAN.md
-docs/REACT_NATIVE_GUIDE.md
+docs/
 dev-plan.md
 development-roadmap.md
 rn-guide.md
 mobile-dev-guide.md
+PROJECT_MANAGEMENT.md
 backend/ai-service/AI_SERVICE_PLAN.md
 
 # 🚫 项目结构和配置文档 (不要提交到GitHub)

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useTranslation } from '../localization/i18n';
 import LanguageToggle from '../components/LanguageToggle';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,6 +44,7 @@ interface UserProfile {
 
 export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenProps) {
   const { t } = useTranslation();
+  const { setProfileComplete } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [profile, setProfile] = useState<UserProfile>({
     age: '',
@@ -362,21 +364,27 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
     </View>
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
       // Complete profile setup
-      Alert.alert(
-        t('profile.completeTitle'),
-        t('profile.completeMessage'),
-        [
-          {
-            text: t('profile.continue'),
-            onPress: () => navigation.navigate('MainApp')
-          }
-        ]
-      );
+      try {
+        await setProfileComplete(true);
+        Alert.alert(
+          t('profile.completeTitle'),
+          t('profile.completeMessage'),
+          [
+            {
+              text: t('profile.continue'),
+              onPress: () => navigation.navigate('MainApp')
+            }
+          ]
+        );
+      } catch (error) {
+        console.error('Error completing profile:', error);
+        Alert.alert('Error', 'Failed to save profile. Please try again.');
+      }
     }
   };
 
@@ -384,7 +392,24 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     } else {
-      navigation.goBack();
+      // 如果在第一步，提供跳过选项
+      Alert.alert(
+        t('profile.skipTitle') || 'Skip Profile Setup?',
+        t('profile.skipMessage') || 'You can complete your profile later in settings. Continue to main app?',
+        [
+          {
+            text: t('profile.cancel') || 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: t('profile.skipButton') || 'Skip for now',
+            onPress: async () => {
+              await setProfileComplete(true);
+              navigation.navigate('MainApp');
+            }
+          }
+        ]
+      );
     }
   };
 
@@ -411,7 +436,18 @@ export default function ProfileSetupScreen({ navigation }: ProfileSetupScreenPro
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-        <LanguageToggle size="small" />
+        <View style={styles.headerRight}>
+          <TouchableOpacity 
+            style={styles.skipButton}
+            onPress={async () => {
+              await setProfileComplete(true);
+              navigation.navigate('MainApp');
+            }}
+          >
+            <Text style={styles.skipButtonText}>{t('profile.skip') || 'Skip'}</Text>
+          </TouchableOpacity>
+          <LanguageToggle size="small" />
+        </View>
       </View>
 
       {/* Progress Indicator */}
@@ -481,8 +517,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 16,
   },
-  headerSpacer: {
-    width: 40,
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  skipButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: 'rgba(95, 99, 104, 0.1)',
+  },
+  skipButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#5f6368',
   },
   progressContainer: {
     paddingHorizontal: 24,
