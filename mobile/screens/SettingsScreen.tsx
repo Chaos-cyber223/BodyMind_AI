@@ -28,6 +28,29 @@ export default function SettingsScreen() {
     );
   };
 
+  // 开发模式强制登出（临时解决方案）
+  const handleForceSignOut = () => {
+    Alert.alert(
+      '🔧 Force Sign Out (Dev Mode)',
+      'This will clear all data and reload the page. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Force Sign Out', 
+          style: 'destructive', 
+          onPress: () => {
+            // 直接清除所有存储并刷新
+            if (typeof window !== 'undefined') {
+              localStorage.clear();
+              sessionStorage.clear();
+              window.location.href = '/';
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const renderProfileSection = () => {
     const userEmail = user?.email || 'guest@bodymind.ai';
     const userName = userEmail.split('@')[0];
@@ -277,6 +300,14 @@ export default function SettingsScreen() {
         
         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
           <Text style={styles.signOutText}>{t('settings.signOut')}</Text>
+        </TouchableOpacity>
+        
+        {/* 开发模式：强制登出按钮 */}
+        <TouchableOpacity 
+          style={[styles.signOutButton, { backgroundColor: '#ff5252', marginTop: 10 }]} 
+          onPress={handleForceSignOut}
+        >
+          <Text style={styles.signOutText}>🔧 Force Sign Out (Dev)</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
