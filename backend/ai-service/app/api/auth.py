@@ -34,7 +34,11 @@ class AuthResponse(BaseModel):
 
 def get_auth_service():
     """Get the appropriate auth service based on environment"""
-    if os.getenv("SUPABASE_URL", "").startswith("http://localhost"):
+    # Use simple auth for development
+    if os.getenv("USE_SIMPLE_AUTH", "true").lower() == "true":
+        from ..services.simple_auth_service import simple_auth
+        return simple_auth
+    elif os.getenv("SUPABASE_URL", "").startswith("http://localhost"):
         return local_auth
     return supabase_service
 
@@ -79,6 +83,7 @@ async def sign_up(request: SignUpRequest):
 
 
 @router.post("/signin", response_model=AuthResponse)
+@router.post("/login", response_model=AuthResponse)  # Compatibility with test_simple_api
 async def sign_in(request: SignInRequest):
     """Sign in with email and password"""
     try:

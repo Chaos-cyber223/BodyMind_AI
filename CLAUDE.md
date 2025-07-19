@@ -1,358 +1,89 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Claude Code (claude.ai/code) 使用指南 - BodyMind_AI 项目
 
-## Project Overview
+## 🎯 项目概述
 
-BodyMind_AI is a full-stack AI-powered fat loss expert application with React Native mobile frontend and Python AI backend. The project provides science-based, personalized fat loss guidance through AI-powered RAG (Retrieval-Augmented Generation) system.
+BodyMind_AI 是一个基于科学研究的AI减脂专家应用，采用React Native前端 + Python FastAPI后端 + LangChain RAG系统架构。
 
-## Development Commands
+## 🚀 快速启动
 
-### Mobile Development (React Native + Expo)
 ```bash
-# Start mobile development
-cd mobile && npm run web                # Web development at http://localhost:8081
-cd mobile && npm start                  # Expo development server
-cd mobile && npm run android            # Android emulator
-cd mobile && npm run ios                # iOS simulator
+# 一键启动完整系统 (移动端 + AI服务)
+./start.sh full
 
-# Root-level mobile commands
-npm run dev:mobile                      # From project root
+# 查看运行状态
+./start.sh status
 ```
 
-### Backend Services
+启动后访问: **http://localhost:8081** (移动端) 和 **http://localhost:8766** (AI服务)
 
-#### AI Service (Simplified Authentication)
+## 🧪 测试验证
+
 ```bash
-# Quick Start (Simplified API)
-cd backend/ai-service
-python test_simple_api.py &
-# Simple auth API running on http://localhost:8765
-
-# API endpoints available:
-# GET  /health                    # Health check
-# POST /api/auth/login           # Login with email/password
-
-# Test account:
-# Email: test@example.com
-# Password: Test123456!
-
-# Full AI service setup (if needed)
-cd backend/ai-service
-python3 -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install -r requirements-minimal.txt
-
-# Configure environment (.env file already set up)
-# Start full AI service
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8765
-# API docs available at: http://localhost:8765/docs
+# 测试AI功能
+python3 tests/test_enhanced_rag.py
 ```
 
-#### Authentication System
-```bash
-# Current Implementation: Simplified In-Memory Auth
-# - No database required for basic functionality
-# - Test account pre-configured in test_simple_api.py
-# - JWT token-based authentication
-# - Frontend connects directly to backend API
+**移动端测试**: 访问 http://localhost:8081
+- 测试账号: `test@example.com` / `Test123456!`
+- 登录后点击Chat标签，发送消息测试AI回答
 
-# For production: PostgreSQL/Supabase setup available
-# See backend/database/SUPABASE_SETUP.md for detailed setup
+## 📚 科学知识库
+
+```bash
+# 查看预设的5篇科学文章
+python3 tests/show_preset_knowledge.py
+
+# 直接阅读文档
+cat knowledge_base/01_caloric_deficit_science.md
 ```
 
-### Docker Development
-```bash
-# Full stack with Docker
-docker-compose up -d                    # Start all services
-docker-compose down                     # Stop all services
-npm run docker:up                       # Shorthand for docker-compose up
-npm run docker:down                     # Shorthand for docker-compose down
+**预设知识库**: 5篇高质量减脂科学研究摘要，位于 `knowledge_base/` 目录
+- 热量缺口原理、蛋白质摄入、力量训练、HIIT对比、减脂平台期
+- 已向量化存储，支持AI智能检索
+
+**扩展知识库**: 参考 `knowledge_base/SUMMARY_TEMPLATE.md` 创建新文章
 ```
 
-### Build Commands
-```bash
-npm run build                           # Build all services
-npm run build:mobile                    # Expo web build
-npm run build:ai                        # Docker image for AI service
-```
+## 🏗️ 技术架构
 
-### Testing and Quality
-```bash
-npm run test                            # Run all tests
-npm run test:mobile                     # React Native tests
-npm run test:ai                         # Python pytest
+- **前端**: React Native + TypeScript (端口8081)
+- **后端**: Python FastAPI + LangChain + Chroma向量数据库 (端口8766)
+- **AI**: SiliconFlow API (DeepSeek-R1 + BGE-M3 embeddings)
 
-npm run lint                            # Lint all services
-npm run lint:mobile                     # Expo lint
-npm run lint:ai                         # Python pylint
+**目录结构**:
+- `mobile/` - React Native前端
+- `backend/ai-service/` - Python AI后端  
+- `knowledge_base/` - 科学研究文档
+- `tests/` - 测试脚本
 
-# Cleanup
-npm run clean                           # Clean all services
-```
+## 🔧 开发信息
 
-## Architecture Overview
+**测试账号**: `test@example.com` / `Test123456!`
 
-### Tech Stack
-- **Mobile**: React Native + TypeScript + Expo + React Navigation
-- **Backend**: Python 3.10 + FastAPI + LangChain RAG system
-- **Database**: 
-  - Chroma vector database for embeddings storage
-  - PostgreSQL (via Supabase or local) for user data and logs
-- **Authentication**: Simplified JWT-based auth (test_simple_api.py) + Full Supabase Auth available
-- **DevOps**: Docker + docker-compose
-- **External APIs**: SiliconFlow API (DeepSeek-R1 + BGE-M3 embeddings)
+**API文档**: http://localhost:8766/docs
 
-### Service Architecture
-1. **Mobile App** (`mobile/`): React Native app with Welcome, Profile Setup, and 4 main tabs (Chat, Plan, Progress, Settings)
-2. **AI Service** (`backend/ai-service/`): Python FastAPI service handling AI chat, RAG queries, and personalized recommendations
+## ✨ 核心功能
 
-### Key Components
-- **Navigation**: React Navigation v7 with bottom tab navigator and stack navigator
-- **AI Chat**: Real-time chat interface with AI-powered responses based on scientific fat loss research
-- **Profile Setup**: Multi-step form collecting user body metrics for personalized TDEE calculations
-- **Meal Plan**: AI-powered food and exercise logging with natural language processing
-- **Progress Tracking**: Visual charts for weight trends, nutrition metrics, and exercise statistics
-- **RAG System**: Retrieval-Augmented Generation using scientific papers for evidence-based recommendations
-- **Tab Navigation**: Bottom tab bar with Chat, Plan, Progress, and Settings tabs
-- **Settings Management**: Language switching, notifications, and app preferences
+- **科学减脂AI专家**: 基于真实研究的个性化建议
+- **RAG检索系统**: 向量相似度搜索科学文献
+- **双语聊天**: 中英文AI对话，显示研究来源
+- **移动端应用**: 完整的减脂管理界面
 
-### Database Schema
-- **Chroma Vector Database**: Embedded scientific research papers for RAG system
-- **PostgreSQL Database**: User authentication, profiles, weight logs, food logs, exercise logs
-  - See `backend/database/schema.sql` for complete schema
-  - Row Level Security (RLS) policies for data isolation
-- **AsyncStorage**: Local storage for user profiles and language preferences
+## 🚨 问题排除
 
-### Development Environment
-- **Monorepo**: Workspaces configured for mobile and ai-service
-- **Hot Reload**: All services support hot reloading during development
-- **Docker**: Containerized development environment
-- **Linting**: ESLint + Pylint for code quality
+**常见问题**:
+- 端口被占用 → 重新运行 `./start.sh full`
+- 移动端白屏 → 运行 `cd mobile && npm install`
+- 查看日志 → `tail -f enhanced_ai.log`
 
-### Current Implementation Status
+## 📋 开发计划
 
-**Recently Completed (Latest Session):**
-- **AI Expert Core Functionality**: Successfully implemented LangChain + RAG system integration with SiliconFlow API
-- **Real AI Chat Integration**: ChatScreen now connects to live AI service with scientific knowledge retrieval
-- **Authentication System Enhancement**: Fixed login/logout flow with simplified JWT authentication
-- **Bilingual AI Responses**: AI chat supports both English and Chinese with proper error handling
-- **Source Citations**: AI responses include scientific source references from knowledge base
-- **TDEE Calculation Service**: Backend provides personalized TDEE and macro calculations
-- **Profile Integration**: User profile data passed to AI for personalized recommendations
-- **Error Handling**: Comprehensive error handling for network issues and API failures
+- [ ] 扩充科学知识库 (目标20-50篇研究)
+- [ ] 优化AI个性化程度
+- [ ] 实现食物/运动日志API集成
 
-**Previously Completed Features:**
-- React Native Mobile App with Google Material Design
-- Multi-step profile setup with body metrics collection
-- Real-time chat screen with LangChain RAG integration
-- AI-powered meal plan screen with smart logging
-- Complete bilingual support (English/Chinese) with i18n system
-- Real-time language switching without app restart
-- Backend API integration with error handling
-- AsyncStorage for profile and language preference persistence
-- Reusable LanguageToggle component
-- Full tab navigation implementation (Chat, Plan, Progress, Settings)
-- SettingsScreen with language switching and notifications
-- ResearchScreen displaying scientific research insights
-- ProgressScreen with weight trend charts and nutrition/exercise tracking
-- Optimized tab navigation without content overlapping issues
+---
 
-- Python FastAPI Backend
-- LangChain RAG System with Chroma vector database
-- SiliconFlow API integration (DeepSeek-R1 + BGE-M3 embeddings)
-- Document upload pipeline for knowledge base expansion
-- Conversational memory with context retention
-- TDEE calculation service with Mifflin-St Jeor equation
-- Food and exercise parsing from natural language
-- Scientific source citation in AI responses
-- Comprehensive API documentation (Swagger/OpenAPI)
-
-- Frontend-Backend Integration
-- Real-time chat with AI responses from LangChain RAG
-- API health checks and error handling
-- Profile data synchronization between frontend and backend
-- AI-powered food/exercise logging with real parsing
-- Source citations displayed in chat responses
-
-- **AI Service (LangChain + RAG)**
-  - SiliconFlow API integration (DeepSeek-R1 model + BGE-M3 embeddings)
-  - In-memory scientific knowledge base with keyword-based retrieval
-  - Real-time AI chat with conversation context tracking
-  - TDEE and macro calculation service
-  - Food/exercise analysis endpoints (ready for future implementation)
-  - Source citation system for evidence-based responses
-  - Comprehensive error handling and timeout management
-
-- **Enhanced Authentication System**
-  - Simplified JWT authentication service (simple_ai_api.py)
-  - In-memory user store with bcrypt password hashing
-  - Direct API integration without complex dependencies
-  - Test account pre-configured (test@example.com / Test123456!)
-  - CORS configured for web development
-  - AsyncStorage integration for token persistence
-  - Frontend login/logout flow working properly
-
-**Next Priority Tasks:**
-- **Expand RAG Knowledge Base**: Add more scientific research documents to improve AI responses
-- **Optimize AI Response Quality**: Fine-tune prompts and retrieval parameters for better answers
-- **Implement Real-time Data Sync**: Connect food/exercise logging with actual API endpoints
-- **Performance Optimization**: Implement caching and optimize API response times
-- **Enhanced Error Handling**: Add retry mechanisms and better user feedback
-- **Push Notifications**: Implement meal and workout reminders
-- **Data Export**: PDF report generation functionality
-- **Production Database**: Migrate to PostgreSQL/Supabase for production deployment
-
-### Development Notes
-- **Mobile app runs on port 8081** - React Native web app with simplified auth
-- **AI service runs on port 8765** - FastAPI server with LangChain RAG
-- SiliconFlow API configured with DeepSeek-R1 model (requires API key)
-- Chroma vector database persists at `./chroma_db/`
-- TypeScript strict mode enabled with linting
-- Expo Go compatible for mobile testing
-- AsyncStorage handles user profile and language preference persistence
-- Bilingual support (English/Chinese) with instant language switching
-- Professional i18n system with 99+ translations covering all UI elements
-
-### AI Service Features
-```bash
-# Available API endpoints (simple_ai_api.py on port 8765):
-
-# Authentication endpoints
-POST /api/auth/login            # Login with email/password (working)
-GET  /health                    # Service health check
-
-# AI-powered endpoints (implemented and tested)
-POST /api/chat/message          # Real AI chat with LangChain RAG-enhanced responses
-POST /api/profile/setup         # User profile setup with TDEE calculation
-
-# Analysis endpoints (ready for future implementation)
-POST /api/analysis/food         # Parse food descriptions ("I ate an apple")
-POST /api/analysis/exercise     # Parse exercise descriptions ("I ran 30 minutes")
-
-# Data logging endpoints (requires authentication)
-POST /api/logs/weight           # Log weight entry
-GET  /api/logs/weight           # Get weight history
-POST /api/logs/food             # Log food entry
-GET  /api/logs/food             # Get food logs
-POST /api/logs/exercise         # Log exercise entry
-GET  /api/logs/exercise         # Get exercise logs
-
-# Knowledge base management
-POST /api/documents/upload      # Upload PDF/TXT documents to knowledge base
-GET  /api/documents/topics      # Get available knowledge topics
-POST /api/documents/clear-memory # Clear conversation memory
-
-# System endpoints
-GET  /health                    # Service health check
-GET  /docs                      # Interactive API documentation
-```
-
-### LangChain RAG Architecture
-- **Vector Store**: Chroma for persistent embeddings storage
-- **Embeddings**: BGE-M3 model via SiliconFlow API
-- **LLM**: DeepSeek-R1-Qwen3-8B via SiliconFlow API
-- **Memory**: ConversationalRetrievalChain with buffer memory
-- **Document Processing**: Automatic chunking with RecursiveCharacterTextSplitter
-- **Retrieval**: Semantic search with top-5 relevant chunks
-
-### Quick Test Commands
-```bash
-# Start AI service (with environment variable fix)
-cd backend/ai-service
-unset OPENAI_API_KEY  # Clear conflicting env var
-python simple_ai_api.py
-
-# Test complete AI chat workflow
-python test_ai_chat.py  # Includes login + AI chat + profile setup
-
-# Test individual endpoints
-curl http://localhost:8765/health  # Health check
-
-# Test login
-curl -X POST "http://localhost:8765/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "Test123456!"}'
-
-# Test AI chat (with auth token)
-curl -X POST "http://localhost:8765/api/chat/message" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "How much protein should I eat for fat loss?", "user_profile": {"age": 25, "weight": 70}}'
-
-# Test TDEE calculation with personalized recommendations
-curl -X POST "http://localhost:8765/api/profile/setup" \
-  -H "Content-Type: application/json" \
-  -d '{"age": 25, "gender": "male", "height": 175, "weight": 70, "activity_level": "moderate", "goal": "lose_weight"}'
-
-# Test AI food analysis
-curl -X POST "http://localhost:8765/api/analysis/food" \
-  -H "Content-Type: application/json" \
-  -d '{"description": "I had scrambled eggs and toast for breakfast"}'
-
-# Test AI exercise analysis  
-curl -X POST "http://localhost:8765/api/analysis/exercise" \
-  -H "Content-Type: application/json" \
-  -d '{"description": "I ran for 30 minutes in the park"}'
-
-# Log weight entry (authenticated)
-curl -X POST "http://localhost:8765/api/logs/weight" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"weight": 70.5, "unit": "kg", "notes": "Morning weight after workout"}'
-
-# Get weight history (authenticated)
-curl -X GET "http://localhost:8765/api/logs/weight?limit=30" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-
-# Log food entry (authenticated)
-curl -X POST "http://localhost:8765/api/logs/food" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"description": "Grilled chicken salad", "meal_type": "lunch", "calories": 450, "protein": 35, "carbs": 20, "fat": 25}'
-
-# Upload document to knowledge base
-curl -X POST "http://localhost:8765/api/documents/upload" \
-  -F "file=@research_paper.pdf" \
-  -F "topic=nutrition" \
-  -F "source=Journal of Nutrition"
-```
-
-### Mobile App Testing
-```bash
-# Start mobile development
-cd mobile && npm run web
-# Open http://localhost:8081 in browser
-# Set browser to mobile view (iPhone 14 Pro recommended)
-
-# Test complete workflow:
-# 1. Login with test@example.com / Test123456!
-# 2. Navigate to Chat tab
-# 3. Send AI messages (now connects to real LangChain service)
-# 4. Check source citations in AI responses
-# 5. Test bilingual support (language toggle works in chat)
-# 6. Verify error handling (disconnect AI service to test offline mode)
-
-# Test complete user flow:
-# 1. Welcome screen → Profile Setup (3 steps) [English/Chinese]
-# 2. Tab navigation: Chat, Plan, Progress, Settings
-# 3. Chat with AI (real LangChain responses) [Bilingual support]
-# 4. Meal Plan screen (AI food/exercise logging) [Localized]
-# 5. Progress screen (weight charts, nutrition tracking) [Bilingual]
-# 6. Settings screen (language, notifications) [Full localization]
-# 7. All screens have backend integration
-# 8. Language switching: Toggle between English/Chinese in real-time
-# 9. Language persistence: Settings saved and restored on app restart
-
-# Test Tab Navigation:
-# - Bottom tab bar with Chat, Plan, Progress, Settings (4 tabs)
-# - Smooth transitions between tabs
-# - No content overlapping with tab bar (80px padding)
-# - Proper SafeAreaView configuration (edges: top, left, right)
-
-# Test Bilingual Features:
-# - Click language toggle button (🌐 EN/中) on any screen
-# - All text updates instantly without app restart
-# - Language preference persists across sessions
-# - Device language auto-detection on first launch
-```
+**快速开始**: `./start.sh full` → 访问 http://localhost:8081

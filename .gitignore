@@ -213,3 +213,8 @@ yarn.lock
 .npm
 .eslintcache
 .stylelintcache 
+
+# ================================
+# Emergency Logout
+# ================================
+emergency_logout.js
