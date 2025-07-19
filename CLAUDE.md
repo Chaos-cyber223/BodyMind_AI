@@ -99,7 +99,7 @@ npm run clean                           # Clean all services
 - **Database**: 
   - Chroma vector database for embeddings storage
   - PostgreSQL (via Supabase or local) for user data and logs
-- **Authentication**: Supabase Auth with JWT tokens
+- **Authentication**: Simplified JWT-based auth (test_simple_api.py) + Full Supabase Auth available
 - **DevOps**: Docker + docker-compose
 - **External APIs**: SiliconFlow API (DeepSeek-R1 + BGE-M3 embeddings)
 
@@ -132,7 +132,17 @@ npm run clean                           # Clean all services
 
 ### Current Implementation Status
 
-**Completed Features:**
+**Recently Completed (Latest Session):**
+- **AI Expert Core Functionality**: Successfully implemented LangChain + RAG system integration with SiliconFlow API
+- **Real AI Chat Integration**: ChatScreen now connects to live AI service with scientific knowledge retrieval
+- **Authentication System Enhancement**: Fixed login/logout flow with simplified JWT authentication
+- **Bilingual AI Responses**: AI chat supports both English and Chinese with proper error handling
+- **Source Citations**: AI responses include scientific source references from knowledge base
+- **TDEE Calculation Service**: Backend provides personalized TDEE and macro calculations
+- **Profile Integration**: User profile data passed to AI for personalized recommendations
+- **Error Handling**: Comprehensive error handling for network issues and API failures
+
+**Previously Completed Features:**
 - React Native Mobile App with Google Material Design
 - Multi-step profile setup with body metrics collection
 - Real-time chat screen with LangChain RAG integration
@@ -165,21 +175,33 @@ npm run clean                           # Clean all services
 - AI-powered food/exercise logging with real parsing
 - Source citations displayed in chat responses
 
-- Simplified Authentication System
-- In-memory user store with bcrypt password hashing
-- JWT token-based authentication
-- Direct API integration (no Supabase dependency)
-- Test account pre-configured for development
-- CORS configured for web development
-- AsyncStorage for token persistence
+- **AI Service (LangChain + RAG)**
+  - SiliconFlow API integration (DeepSeek-R1 model + BGE-M3 embeddings)
+  - In-memory scientific knowledge base with keyword-based retrieval
+  - Real-time AI chat with conversation context tracking
+  - TDEE and macro calculation service
+  - Food/exercise analysis endpoints (ready for future implementation)
+  - Source citation system for evidence-based responses
+  - Comprehensive error handling and timeout management
 
-**TODO:**
-- Fix frontend login authentication flow
-- Real-time data sync with backend services
-- Performance optimization and comprehensive error handling
-- Push notifications for meal and workout reminders
-- Export data functionality (PDF reports)
-- Migrate to production database (PostgreSQL/Supabase)
+- **Enhanced Authentication System**
+  - Simplified JWT authentication service (simple_ai_api.py)
+  - In-memory user store with bcrypt password hashing
+  - Direct API integration without complex dependencies
+  - Test account pre-configured (test@example.com / Test123456!)
+  - CORS configured for web development
+  - AsyncStorage integration for token persistence
+  - Frontend login/logout flow working properly
+
+**Next Priority Tasks:**
+- **Expand RAG Knowledge Base**: Add more scientific research documents to improve AI responses
+- **Optimize AI Response Quality**: Fine-tune prompts and retrieval parameters for better answers
+- **Implement Real-time Data Sync**: Connect food/exercise logging with actual API endpoints
+- **Performance Optimization**: Implement caching and optimize API response times
+- **Enhanced Error Handling**: Add retry mechanisms and better user feedback
+- **Push Notifications**: Implement meal and workout reminders
+- **Data Export**: PDF report generation functionality
+- **Production Database**: Migrate to PostgreSQL/Supabase for production deployment
 
 ### Development Notes
 - **Mobile app runs on port 8081** - React Native web app with simplified auth
@@ -194,18 +216,17 @@ npm run clean                           # Clean all services
 
 ### AI Service Features
 ```bash
-# Available API endpoints:
+# Available API endpoints (simple_ai_api.py on port 8765):
 
 # Authentication endpoints
-POST /api/auth/signup           # Create new user account
-POST /api/auth/login            # Login with email/password
-POST /api/auth/logout           # Logout current user
-GET  /api/auth/me               # Get current user profile
-POST /api/auth/refresh          # Refresh JWT token
+POST /api/auth/login            # Login with email/password (working)
+GET  /health                    # Service health check
 
-# AI-powered endpoints
-POST /api/chat/message          # AI chat with LangChain RAG-enhanced responses
-POST /api/profile/setup         # User profile setup with TDEE calculation  
+# AI-powered endpoints (implemented and tested)
+POST /api/chat/message          # Real AI chat with LangChain RAG-enhanced responses
+POST /api/profile/setup         # User profile setup with TDEE calculation
+
+# Analysis endpoints (ready for future implementation)
 POST /api/analysis/food         # Parse food descriptions ("I ate an apple")
 POST /api/analysis/exercise     # Parse exercise descriptions ("I ran 30 minutes")
 
@@ -237,21 +258,25 @@ GET  /docs                      # Interactive API documentation
 
 ### Quick Test Commands
 ```bash
-# Test health endpoint
-curl http://localhost:8765/health
+# Start AI service (with environment variable fix)
+cd backend/ai-service
+unset OPENAI_API_KEY  # Clear conflicting env var
+python simple_ai_api.py
 
-# Authentication Tests (Simplified API)
-# Test login with pre-configured account
-python -c "
-import requests
-response = requests.post('http://localhost:8765/api/auth/login', 
-    json={'email': 'test@example.com', 'password': 'Test123456!'})
-print('Status:', response.status_code)
-print('Response:', response.json())
-"
+# Test complete AI chat workflow
+python test_ai_chat.py  # Includes login + AI chat + profile setup
 
-# Test LangChain RAG chat with SiliconFlow API
+# Test individual endpoints
+curl http://localhost:8765/health  # Health check
+
+# Test login
+curl -X POST "http://localhost:8765/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "password": "Test123456!"}'
+
+# Test AI chat (with auth token)
 curl -X POST "http://localhost:8765/api/chat/message" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message": "How much protein should I eat for fat loss?", "user_profile": {"age": 25, "weight": 70}}'
 
@@ -299,6 +324,14 @@ curl -X POST "http://localhost:8765/api/documents/upload" \
 cd mobile && npm run web
 # Open http://localhost:8081 in browser
 # Set browser to mobile view (iPhone 14 Pro recommended)
+
+# Test complete workflow:
+# 1. Login with test@example.com / Test123456!
+# 2. Navigate to Chat tab
+# 3. Send AI messages (now connects to real LangChain service)
+# 4. Check source citations in AI responses
+# 5. Test bilingual support (language toggle works in chat)
+# 6. Verify error handling (disconnect AI service to test offline mode)
 
 # Test complete user flow:
 # 1. Welcome screen → Profile Setup (3 steps) [English/Chinese]

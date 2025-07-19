@@ -188,6 +188,9 @@ const translations = {
     'chat.quickActions.exercise': 'Best exercises for fat loss',
     'chat.quickActions.plateau': 'Why am I not losing weight?',
     'chat.quickActions.hiit': 'HIIT vs cardio',
+    'chat.welcome': 'Welcome to BodyMind AI! I\'m your science-based fat loss expert. How can I help you today?',
+    'chat.serviceOffline': 'AI service is currently offline. Please try again later.',
+    'chat.errorSending': 'Failed to send message. Please try again.',
 
     // Meal Plan Screen
     'mealPlan.title': 'Your Personal Plan',
@@ -462,6 +465,9 @@ const translations = {
     'chat.quickActions.exercise': '减脂最佳运动',
     'chat.quickActions.plateau': '为什么我不减重了？',
     'chat.quickActions.hiit': 'HIIT与有氧运动',
+    'chat.welcome': '欢迎使用BodyMind AI！我是您的科学减脂专家。今天我能为您做些什么？',
+    'chat.serviceOffline': 'AI服务当前离线。请稍后再试。',
+    'chat.errorSending': '发送消息失败。请重试。',
 
     // Meal Plan Screen
     'mealPlan.title': '个人计划',

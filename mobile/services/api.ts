@@ -188,14 +188,19 @@ const apiService = {
   },
 };
 
-// Request interceptor for auth (future use)
+// Request interceptor for auth
 api.interceptors.request.use(
-  (config) => {
-    // Add auth token when implemented
-    // const token = getAuthToken();
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config) => {
+    // Add auth token from AsyncStorage
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+    }
     return config;
   },
   (error) => {

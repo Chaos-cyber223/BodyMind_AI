@@ -73,20 +73,29 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
   const initializeChat = async () => {
     try {
       console.log('Initializing chat...');
-      // 暂时跳过API检查，直接显示欢迎消息
-      setMessages([{
-        id: '1',
-        text: 'Welcome to BodyMind AI! How can I help you with your fat loss journey?',
-        sender: 'ai',
-        timestamp: new Date(),
-        status: 'sent',
-      }]);
+      
+      // Check if AI service is running
+      const isHealthy = await apiService.healthCheck();
+      
+      if (isHealthy) {
+        // Show welcome message with bilingual support
+        setMessages([{
+          id: '1',
+          text: t('chat.welcome'),
+          sender: 'ai',
+          timestamp: new Date(),
+          status: 'sent',
+        }]);
+      } else {
+        throw new Error('AI service not available');
+      }
     } catch (error) {
       console.error('Failed to initialize chat:', error);
+      // Show offline message
       setMessages([{
         id: '1',
-        text: 'Welcome to BodyMind AI! How can I help you with your fat loss journey?',
-        sender: 'ai',
+        text: t('chat.serviceOffline'),
+        sender: 'system',
         timestamp: new Date(),
         status: 'sent',
       }]);
@@ -105,31 +114,64 @@ export default function ChatScreen({ navigation }: ChatScreenProps) {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageText = inputText.trim();
     setInputText('');
     setIsLoading(true);
 
     try {
-      // 暂时模拟AI响应
-      setTimeout(() => {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: `I received your message: "${inputText.trim()}". This is a test response.`,
-          sender: 'ai',
-          timestamp: new Date(),
-          status: 'sent',
-        };
+      // Call real AI API
+      const response = await apiService.sendMessage({
+        message: messageText,
+        user_profile: userProfile,
+        conversation_id: conversationId || undefined,
+      });
 
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === userMessage.id 
-              ? { ...msg, status: 'sent' as const }
-              : msg
-          ).concat(aiMessage)
-        );
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
+      // Update conversation ID if this is the first message
+      if (!conversationId && response.conversation_id) {
+        setConversationId(response.conversation_id);
+      }
+
+      // Create AI response message
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: response.response,
+        sender: 'ai',
+        timestamp: new Date(response.timestamp),
+        status: 'sent',
+        sources: response.sources,
+      };
+
+      // Update messages: mark user message as sent and add AI response
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === userMessage.id 
+            ? { ...msg, status: 'sent' as const }
+            : msg
+        ).concat(aiMessage)
+      );
+    } catch (error: any) {
       console.error('Failed to send message:', error);
+      
+      // Mark user message as error
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === userMessage.id 
+            ? { ...msg, status: 'error' as const }
+            : msg
+        )
+      );
+
+      // Show error message
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: error.response?.data?.detail || t('chat.errorSending'),
+        sender: 'system',
+        timestamp: new Date(),
+        status: 'sent',
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
     }
   };
