@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BodyMind AI - 科学减脂专家</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <div class="logo-text">
+                    <h1>BodyMind AI</h1>
+                    <p>科学减脂专家</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                基于真实科学研究
+            </div>
+        </header>
+
+        <!-- Main Chat Interface -->
+        <div class="chat-container">
+            <!-- Welcome Section -->
+            <div class="welcome-section" id="welcomeSection">
+                <div class="ai-avatar-large">
+                    <div class="avatar-glow"></div>
+                    🤖
+                </div>
+                <h2>你好！我是你的AI减脂专家</h2>
+                <p>基于5篇科学研究论文，为你提供个性化的减脂建议</p>
+                
+                <!-- Preset Questions -->
+                <div class="preset-questions">
+                    <h3>选择一个问题开始咨询：</h3>
+                    <div class="questions-grid">
+                        <button class="question-card" onclick="askPresetQuestion('caloric-deficit')">
+                            <div class="question-icon">📊</div>
+                            <div class="question-text">
+                                <h4>如何科学制定热量缺口计划？</h4>
+                                <p>了解安全有效的减脂速度和热量控制</p>
+                            </div>
+                        </button>
+                        
+                        <button class="question-card" onclick="askPresetQuestion('protein')">
+                            <div class="question-icon">🥩</div>
+                            <div class="question-text">
+                                <h4>蛋白质摄入对减脂的重要性</h4>
+                                <p>科学确定蛋白质需求量和最佳摄入时间</p>
+                            </div>
+                        </button>
+                        
+                        <button class="question-card" onclick="askPresetQuestion('hiit')">
+                            <div class="question-icon">🏃</div>
+                            <div class="question-text">
+                                <h4>HIIT vs 传统有氧哪个更好？</h4>
+                                <p>对比不同运动方式的减脂效果</p>
+                            </div>
+                        </button>
+                        
+                        <button class="question-card" onclick="askPresetQuestion('plateau')">
+                            <div class="question-icon">📈</div>
+                            <div class="question-text">
+                                <h4>减脂平台期如何突破？</h4>
+                                <p>理解代谢适应和应对策略</p>
+                            </div>
+                        </button>
+                        
+                        <button class="question-card" onclick="askPresetQuestion('resistance')">
+                            <div class="question-icon">💪</div>
+                            <div class="question-text">
+                                <h4>力量训练在减脂中的作用</h4>
+                                <p>保持肌肉量和提高代谢的科学方法</p>
+                            </div>
+                        </button>
+                        
+                        <button class="question-card custom-question" onclick="enableCustomInput()">
+                            <div class="question-icon">💬</div>
+                            <div class="question-text">
+                                <h4>自定义问题</h4>
+                                <p>问我任何关于科学减脂的问题</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages" style="display: none;">
+                <div class="message-container">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Custom Input Section -->
+            <div class="custom-input-section" id="customInputSection" style="display: none;">
+                <div class="input-container">
+                    <input type="text" id="customMessageInput" placeholder="问我任何关于减脂的问题..." />
+                    <button id="sendButton" onclick="sendCustomMessage()">发送</button>
+                </div>
+                <button class="back-to-presets" onclick="backToPresets()">← 返回预设问题</button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-animation">
+                    <div class="loading-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <p>AI正在分析科学文献并生成回答...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by LangChain + RAG | 基于真实科学研究 | 
+            <a href="https://github.com/yourname/BodyMind_AI" target="_blank">View Source</a></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

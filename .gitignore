@@ -16,6 +16,9 @@ PROJECT_STRUCTURE.md
 docker-compose.yml
 CLAUDE.md
 
+# 🚫 PC端Web演示中文文档 (不要提交到GitHub)
+web-demo/PC端使用指南.md
+
 # ================================
 # React Native / Expo
 # ================================
